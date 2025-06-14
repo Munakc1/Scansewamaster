@@ -11,10 +11,10 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
 
   const showNavbar = !excludedRoutes.includes(pathname);
 
-  return (
-    <>
-      {showNavbar && <MasterDashNavbar />}
-      {children}
-    </>
-  );
+  if (!showNavbar) {
+    return <>{children}</>; // Just render children, no navbar
+  }
+
+  // Wrap children inside MasterDashNavbar
+  return <MasterDashNavbar>{children}</MasterDashNavbar>;
 }
