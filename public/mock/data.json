@@ -1,0 +1,846 @@
+{
+  "aboutUs": {
+    "timelineData": [
+      {
+        "year": "2021",
+        "event": "CareSewa launched in India",
+        "color": "#4C956C"
+      },
+      {
+        "year": "2022",
+        "event": "Reached 1M users",
+        "color": "#4C956C"
+      },
+      {
+        "year": "2024",
+        "event": "Expanded to Southeast Asia",
+        "color": "#4C956C"
+      },
+      {
+        "year": "2025",
+        "event": "Global launch roadmap begins",
+        "color": "#4C956C"
+      }
+    ],
+    "teamMembers": [
+      {
+        "name": "Dr. Ayesha Sharma",
+        "role": "Chief Medical Officer",
+        "bio": "Lorem ipsum dolor sit amet.",
+        "image": "/assets/team/ayesha.jpg"
+      },
+      {
+        "name": "Rohan Mehta",
+        "role": "CTO",
+        "bio": "Consectetur adipiscing elit.",
+        "image": "/assets/team/rohan.jpg"
+      },
+      {
+        "name": "Anjali Desai",
+        "role": "Head of Operations",
+        "bio": "Sed do eiusmod tempor incididunt.",
+        "image": "/assets/team/anjali.jpg"
+      }
+    ]
+  },
+
+  "nurses": [
+    {
+      "nurseId": "nurse_201",
+      "fullName": "Sunita Patel",
+      "dateOfBirth": "1990-08-10",
+      "gender": "Female",
+      "phone": "9876543213",
+      "email": "sunita.patel@caresewa.in",
+      "profilePhoto": "https://randomuser.me/api/portraits/women/33.jpg",
+      "credentials": {
+        "qualification": "B.Sc Nursing",
+        "registrationNumber": "NUR123456",
+        "yearsOfExperience": 7,
+        "specialty": ["Pediatric Care", "Postpartum Care"],
+        "languages": ["English", "Hindi", "Gujarati"]
+      },
+      "serviceDetails": {
+        "ratePerHour": 600,
+        "minHoursPerDay": 4,
+        "servicesProvided": [
+          "Medication Administration",
+          "Wound Dressing",
+          "Vital Monitoring",
+          "Newborn Care"
+        ]
+      },
+      "availability": {
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "timeSlots": [
+          { "start": "08:00", "end": "14:00" },
+          { "start": "16:00", "end": "20:00" }
+        ],
+        "location": {
+          "areasServed": ["South Mumbai", "Central Suburbs"],
+          "travelRadius": 15
+        }
+      },
+      "stats": {
+        "rating": 4.7,
+        "jobsCompleted": 85,
+        "responseRate": "98%"
+      },
+      "verification": {
+        "backgroundCheck": true,
+        "certificateVerified": true,
+        "cprCertified": true
+      }
+    },
+    {
+      "nurseId": "nurse_202",
+      "fullName": "Rajesh Kumar",
+      "dateOfBirth": "1985-03-25",
+      "gender": "Male",
+      "phone": "9876543214",
+      "email": "rajesh.kumar@caresewa.in",
+      "profilePhoto": "https://randomuser.me/api/portraits/men/75.jpg",
+      "credentials": {
+        "qualification": "GNM Nursing",
+        "registrationNumber": "NUR654321",
+        "yearsOfExperience": 10,
+        "specialty": ["Geriatric Care", "Palliative Care"],
+        "languages": ["English", "Hindi", "Tamil"]
+      },
+      "serviceDetails": {
+        "ratePerHour": 550,
+        "minHoursPerDay": 6,
+        "servicesProvided": [
+          "Elderly Care",
+          "Physiotherapy Assistance",
+          "Catheter Care",
+          "Dementia Care"
+        ]
+      },
+      "availability": {
+        "days": ["All Days"],
+        "timeSlots": [
+          { "start": "07:00", "end": "19:00" }
+        ],
+        "location": {
+          "areasServed": ["Entire Bangalore"],
+          "travelRadius": 25
+        }
+      },
+      "stats": {
+        "rating": 4.8,
+        "jobsCompleted": 120,
+        "responseRate": "100%"
+      },
+      "verification": {
+        "backgroundCheck": true,
+        "certificateVerified": true,
+        "cprCertified": true
+      }
+    }
+  ],
+  "diagnosticsLabs": [
+    {
+      "labId": "lab1",
+      "name": "HealthFirst Labs",
+      "location": {
+        "address": "Connaught Place",
+        "city": "Delhi"
+      },
+      "rating": 4.7,
+      "testStartPrice": 1200,
+      "logoUrl": "/assets/labs/healthfirst.jpg"
+    },
+    {
+      "labId": "lab2",
+      "name": "CarePoint Diagnostics",
+      "location": {
+        "address": "Andheri",
+        "city": "Mumbai"
+      },
+      "rating": 4.5,
+      "testStartPrice": 950,
+      "logoUrl": "/assets/labs/carepoint.jpg"
+    }
+  ],
+  "medicines": [
+    {
+      "medicineId": "m1",
+      "name": "Paracetamol 500mg",
+      "brand": "Cipla",
+      "price": 30,
+      "discountPercent": 10,
+      "imageUrl": "/assets/medicines/paracetamol.jpg",
+      "stock": 100,
+      "requiresPrescription": false,
+      "category": "OTC",
+      "description": "Used to treat fever and mild to moderate pain"
+    },
+    {
+      "medicineId": "m2",
+      "name": "Cetirizine",
+      "brand": "Sun Pharma",
+      "price": 25,
+      "discountPercent": 5,
+      "imageUrl": "/assets/medicines/cetirizine.jpg",
+      "stock": 50,
+      "requiresPrescription": false,
+      "category": "OTC",
+      "description": "Antihistamine used to relieve allergy symptoms"
+    },
+    {
+      "medicineId": "m3",
+      "name": "Amoxicillin 500mg",
+      "brand": "Cipla",
+      "price": 120,
+      "discountPercent": 15,
+      "imageUrl": "/assets/medicines/amoxicillin.jpg",
+      "stock": 30,
+      "requiresPrescription": true,
+      "category": "Prescription",
+      "description": "Antibiotic used to treat bacterial infections"
+    },
+    {
+      "medicineId": "m4",
+      "name": "Omeprazole 20mg",
+      "brand": "Dr. Reddy's",
+      "price": 85,
+      "discountPercent": 10,
+      "imageUrl": "/assets/medicines/omeprazole.jpg",
+      "stock": 0,
+      "requiresPrescription": true,
+      "category": "Prescription",
+      "description": "Used to treat acid reflux and stomach ulcers"
+    }
+  ],
+  "patient": [
+    {
+      "name": "Rohit Sharma",
+      "address": {
+        "street": "14/B, Cricket Lane",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "pinCode": "400001"
+      },
+      "phone": "9876543210",
+      "password": "hello123",
+      "email": "rohit.sharma@example.com",
+      "age": 36,
+      "allergies": ["dust", "peanuts"],
+      "medicalHistory": [
+        {
+          "condition": "Asthma",
+          "diagnosedDate": "2015-08-20T00:00:00.000Z"
+        },
+        {
+          "condition": "Knee Injury",
+          "diagnosedDate": "2021-03-15T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "name": "Priya Patel",
+      "address": {
+        "street": "22, Rainbow Apartments",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "pinCode": "560001"
+      },
+      "phone": "8765432109",
+      "password": "securePass123",
+      "email": "priya.patel@example.com",
+      "age": 28,
+      "allergies": ["penicillin", "shellfish"],
+      "medicalHistory": [
+        {
+          "condition": "Migraine",
+          "diagnosedDate": "2018-11-10T00:00:00.000Z"
+        },
+        {
+          "condition": "Vitamin D Deficiency",
+          "diagnosedDate": "2020-01-05T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "name": "Neha Gupta",
+      "address": {
+        "street": "9, Silver Oak Complex",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pinCode": "500001"
+      },
+      "phone": "6543210987",
+      "password": "nehaG#456",
+      "email": "neha.gupta@example.com",
+      "age": 31,
+      "allergies": ["aspirin", "eggs"],
+      "medicalHistory": [
+        {
+          "condition": "PCOS",
+          "diagnosedDate": "2016-07-22T00:00:00.000Z"
+        },
+        {
+          "condition": "Anemia",
+          "diagnosedDate": "2020-10-15T00:00:00.000Z"
+        }
+      ],
+      "userDashboard": {
+        "userId": "u1",
+        "name": "Neha Gupta",
+        "initials": "NG",
+        "membershipType": "Premium Member",
+        "avatar": {
+          "backgroundColor": "#5FA8D3",
+          "textColor": "white"
+        }
+      },
+      "notifications": [
+        {
+          "id": 1,
+          "title": "Appointment Reminder",
+          "message": "Your appointment with Dr. Anjali Mehta is tomorrow at 10:00 AM",
+          "time": "10 min ago",
+          "read": false
+        },
+        {
+          "id": 2,
+          "title": "Prescription Ready",
+          "message": "Your prescription from Dr. Rajeev Sharma is now available",
+          "time": "2 hours ago",
+          "read": true
+        },
+        {
+          "id": 3,
+          "title": "Payment Successful",
+          "message": "..."
+        }
+      ],
+      "statsCards": [
+        {
+          "title": "Upcoming Appointments",
+          "value": 3,
+          "trend": "↑ 1 new",
+          "subtext": "this week",
+          "icon": "FaCalendarAlt"
+        }
+      ],
+      "recentAppointments": [
+        {
+          "doctorId": "d1",
+          "doctorName": "Dr. Anjali Mehta",
+          "specialty": "Cardiologist",
+          "consultationType": "Heart Checkup",
+          "date": "2025-05-23",
+          "time": "10:00",
+          "status": "Confirmed",
+          "statusColor": "green"
+        }
+      ],
+      "healthSummary": [
+        {
+          "metric": "Blood Pressure",
+          "value": "120/80 mmHg",
+          "progress": 90,
+          "color": "green"
+        }
+      ],
+      "recentActivity": [
+        {
+          "type": "Appointment",
+          "message": "Appointment confirmed with Dr. Mehta",
+          "time": "Today, 10:30 AM",
+          "color": "green"
+        }
+      ]
+    },
+    {
+      "name": "Rahul Singh",
+      "address": {
+        "street": "45, Green Meadows",
+        "city": "Delhi",
+        "state": "Delhi",
+        "pinCode": "110001"
+      },
+      "phone": "1234567890",
+      "password": "rahul@1234",
+      "email": "rohit.sharma@example.com"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": 1,
+      "message": "CareSewa has transformed how I manage my health. The doctors are incredibly knowledgeable and the platform is so easy to use. I can book appointments, order medicines, and even get lab tests done from home!",
+      "name": "Priya Sharma"
+    },
+    {
+      "id": 2,
+      "message": "As a busy professional, CareSewa has been a lifesaver. Quick consultations, reliable nurses for elderly care, and medicines delivered right to my doorstep. Highly recommend to everyone!",
+      "name": "Rajesh Kumar"
+    },
+    {
+      "id": 3,
+      "message": "The quality of care I received from Dr. Anjali Mehta was exceptional. The follow-up care and medication management through the platform made my recovery so much smoother.",
+      "name": "Anita Desai"
+    },
+    {
+      "id": 4,
+      "message": "I was skeptical about online healthcare, but CareSewa changed my mind completely. The psychiatry consultation helped me during a difficult time, and the support was genuinely caring.",
+      "name": "Arjun Patel"
+    },
+    {
+      "id": 5,
+      "message": "The nurse we hired for my mother's post-surgery care was amazing. Professional, caring, and available exactly when we needed her. CareSewa's vetting process is clearly thorough.",
+      "name": "Meera Agarwal"
+    },
+    {
+      "id": 6,
+      "message": "Fast, reliable, and affordable healthcare. The diagnostic lab partnerships are excellent - got my test results within hours and the reports were detailed and easy to understand.",
+      "name": "Vikram Singh"
+    },
+    {
+      "id": 7,
+      "message": "CareSewa's customer service is outstanding. When I had an issue with my medication order, they resolved it within minutes. This is how healthcare should be!",
+      "name": "Kavita Joshi"
+    },
+    {
+      "id": 8,
+      "message": "The dermatology consultation was thorough and the prescribed treatment worked perfectly. Having access to specialists without the hassle of hospital visits is incredible.",
+      "name": "Rohit Malhotra"
+    },
+    {
+      "id": 9,
+      "message": "I love how I can track my health metrics and get reminders for medications. The platform feels like having a personal health assistant. Very impressed with the technology.",
+      "name": "Sanya Gupta"
+    },
+    {
+      "id": 10,
+      "message": "The heart checkup I booked through CareSewa was comprehensive and the doctor took time to explain everything. The follow-up care and health monitoring features are fantastic.",
+      "name": "Ashok Reddy"
+    },
+    {
+      "id": 11,
+      "message": "Finding quality healthcare in my city was always a challenge. CareSewa connected me with excellent doctors and the telemedicine feature works flawlessly even in remote areas.",
+      "name": "Pooja Nair"
+    },
+    {
+      "id": 12,
+      "message": "The elderly care services are exceptional. The nurses are not just skilled but also compassionate. My father feels comfortable and well-cared for.",
+      "name": "Deepak Chopra"
+    }
+  ],
+  "ambulanceBookings": [
+    {
+      "bookingId": "amb1",
+      "patientName": "Rahul Singh",
+      "pickupLocation": "AIIMS Hospital, Delhi",
+      "dropLocation": "Max Hospital, Saket",
+      "bookingTime": "2025-05-27T14:30:00.000Z",
+      "status": "Confirmed",
+      "ambulanceType": "ICU"
+    },
+    {
+      "bookingId": "amb2",
+      "patientName": "Neha Gupta",
+      "pickupLocation": "Banjara Hills, Hyderabad",
+      "dropLocation": "Apollo Hospital",
+      "bookingTime": "2025-05-26T10:15:00.000Z",
+      "status": "Completed",
+      "ambulanceType": "Basic"
+    }
+  ],
+  "pharmacyOrders": [
+    {
+      "orderId": "ph1",
+      "patientName": "Rohit Sharma",
+      "medicines": [
+        { "medicineId": "m1", "quantity": 2 },
+        { "medicineId": "m3", "quantity": 1 }
+      ],
+      "totalAmount": 180,
+      "orderDate": "2025-05-25",
+      "deliveryStatus": "Delivered"
+    }
+  ],
+  "nurseHiring": [
+    {
+      "hiringId": "nh1",
+      "nurseId": "n2",
+      "patientName": "Meera Agarwal",
+      "startDate": "2025-05-20",
+      "endDate": "2025-06-20",
+      "shift": "Day",
+      "status": "Ongoing"
+    }
+  ],
+  "offers": [
+    {
+      "offerId": "off1",
+      "title": "20% off on your first consultation",
+      "description": "Book your first doctor consultation and get 20% off.",
+      "validTill": "2025-06-30",
+      "type": "Consultation"
+    },
+    {
+      "offerId": "off2",
+      "title": "Free delivery on pharmacy orders above ₹500",
+      "description": "Order now and get medicines delivered free.",
+      "validTill": "2025-07-15",
+      "type": "Pharmacy"
+    }
+  ],
+  "pharmacy": [
+    {
+      "id": "1",
+      "name": "Apollo Pharmacy",
+      "address": "123 Main Street, Delhi",
+      "phone": "+91 9876543210",
+      "imageUrl": "https://akm-img-a-in.tosshub.com/businesstoday/images/story/202405/6648af77672af-apollo-pharmacy-18390238-16x9.jpg",
+      "mapUrl": "https://maps.google.com/?q=City+Care+Pharmacy"
+    },
+    {
+      "id": "2",
+      "name": "Medicine One",
+      "address": "456 Sector 22, Chandigarh",
+      "phone": "+91 9123456789",
+      "imageUrl": "https://content.jdmagicbox.com/v2/comp/mumbai/a2/022pxx22.xx22.210622132046.j4a2/catalogue/medicine-one-mazgaon-mumbai-chemists-f2wrwfwz12.jpg",
+      "mapUrl": "https://maps.google.com/?q=Green+Cross+Medicos"
+    },
+    {
+      "id": "3",
+      "name": "Prime Life Pharmacy",
+      "address": "789 MG Road, Bengaluru",
+      "phone": "+91 9988776655",
+      "imageUrl": "https://5.imimg.com/data5/SELLER/Default/2021/12/WB/ML/PP/28226719/pharmacy-store-rack-500x500.jpeg",
+      "mapUrl": "https://maps.google.com/?q=Apollo+Pharmacy"
+    },
+     {
+      "id": "4",
+      "name": "Wellness Forever",
+      "address": "123 Main Street, Delhi",
+      "phone": "+91 9876543210",
+      "imageUrl": "https://indian-retailer.s3.ap-south-1.amazonaws.com/s3fs-public/2021-08/WF%20New%20Store%20-%20Koparkharine.jpeg",
+      "mapUrl": "https://maps.google.com/?q=City+Care+Pharmacy"
+    },
+     {
+      "id": "5",
+      "name": "Apna Chemist",
+      "address": "123 Main Street, Delhi",
+      "phone": "+91 9876543210",
+      "imageUrl": "https://static.theprint.in/wp-content/uploads/2023/01/ANI-20230123120035.jpg",
+      "mapUrl": "https://maps.google.com/?q=City+Care+Pharmacy"
+    },
+     {
+      "id": "6",
+      "name": "City Care Pharmacy",
+      "address": "123 Main Street, Delhi",
+      "phone": "+91 9876543210",
+      "imageUrl": "https://media.istockphoto.com/id/1390983469/photo/portrait-shot-of-happy-medical-shop-owner-standing-with-crossed-arms-by-looking-at-camera-at.jpg?s=612x612&w=0&k=20&c=AFvYvpvWYfb5Cllhq-VAFk5cCxKSnEZMtHu3zcYF2Xg=",
+      "mapUrl": "https://maps.google.com/?q=City+Care+Pharmacy"
+    }
+  ],
+  "doctor": [
+      {
+      "doctorId": "doc_101",
+      "fullName": "Dr. Priyanka Reddy",
+      "dateOfBirth": "1988-11-22",
+      "gender": "Female",
+      "phone": "9876543211",
+      "email": "priyanka.reddy@caresewa.in",
+      "profilePhoto": "https://randomuser.me/api/portraits/women/65.jpg",
+      "credentials": {
+        "mbbsCertificate": "/certs/mbbs_priyanka.pdf",
+        "pgCertificate": "/certs/md_priyanka.pdf",
+        "registrationNumber": "MH123789",
+        "medicalCouncil": "Maharashtra Medical Council",
+        "state": "Maharashtra",
+        "yearsOfExperience": 8,
+        "specializations": ["Dermatology", "Cosmetology"],
+        "languages": ["English", "Hindi", "Telugu", "Marathi"]
+      },
+      "practice": {
+        "clinicName": "Skin & Beauty Clinic",
+        "address": {
+          "street": "45 Hill Road, Bandra West",
+          "city": "Mumbai",
+          "pinCode": "400050",
+          "geoLocation": [72.8276, 19.0556]
+        },
+        "consultationFees": {
+          "inClinic": 1200,
+          "online": 900
+        },
+        "workingDays": ["Mon", "Wed", "Thu", "Fri", "Sat"],
+        "timeSlots": [
+          { "start": "10:00", "end": "13:00" },
+          { "start": "16:00", "end": "19:00" }
+        ],
+        "appointmentModes": ["In-person", "Video"]
+      },
+      "stats": {
+        "rating": 4.8,
+        "patientsTreated": 1240,
+        "responseTime": "15 mins"
+      },
+      "availability": {
+        "nextAvailable": "2025-06-05T10:30:00",
+        "holidayMode": false
+      }
+    },
+    {
+      "doctorId": "doc_102",
+      "fullName": "Dr. Arjun Kapoor",
+      "dateOfBirth": "1980-05-15",
+      "gender": "Male",
+      "phone": "9876543212",
+      "email": "arjun.kapoor@caresewa.in",
+      "profilePhoto": "https://randomuser.me/api/portraits/men/42.jpg",
+      "credentials": {
+        "mbbsCertificate": "/certs/mbbs_arjun.pdf",
+        "pgCertificate": "/certs/ms_arjun.pdf",
+        "registrationNumber": "DL456123",
+        "medicalCouncil": "Delhi Medical Council",
+        "state": "Delhi",
+        "yearsOfExperience": 15,
+        "specializations": ["Orthopedics", "Sports Medicine"],
+        "languages": ["English", "Hindi", "Punjabi"]
+      },
+      "practice": {
+        "clinicName": "Bone & Joint Care",
+        "address": {
+          "street": "E-12, Greater Kailash Part 1",
+          "city": "New Delhi",
+          "pinCode": "110048",
+          "geoLocation": [77.2410, 28.5485]
+        },
+        "consultationFees": {
+          "inClinic": 1500,
+          "online": 1000
+        },
+        "workingDays": ["Tue", "Wed", "Thu", "Fri", "Sat"],
+        "timeSlots": [
+          { "start": "09:00", "end": "12:00" },
+          { "start": "17:00", "end": "20:00" }
+        ],
+        "appointmentModes": ["In-person"]
+      },
+      "stats": {
+        "rating": 4.9,
+        "patientsTreated": 2150,
+        "responseTime": "10 mins"
+      },
+      "availability": {
+        "nextAvailable": "2025-06-04T17:30:00",
+        "holidayMode": false
+      },
+
+      "statsCards": [
+        {
+          "title": "Appointments This Month",
+          "value": 128,
+          "trend": "↑ 12%",
+          "subtext": "vs last month",
+          "icon": "FaCalendarCheck"
+        },
+        {
+          "title": "Total Patients",
+          "value": 520,
+          "trend": "↑ 8%",
+          "subtext": "overall",
+          "icon": "FaUsers"
+        },
+        {
+          "title": "Monthly Earnings",
+          "value": 98000,
+          "trend": "↑ 15%",
+          "subtext": "INR",
+          "icon": "FaMoneyCheckAlt"
+        },
+        {
+          "title": "Available Slots",
+          "value": 42,
+          "trend": "↓ 5%",
+          "subtext": "week",
+          "icon": "FaUserMd"
+        }
+      ],
+
+      "upcomingAppointments": [
+        {
+          "patientName": "Rahul Jain",
+          "date": "2025-05-30",
+          "time": "10:30",
+          "type": "In-person",
+          "status": "Confirmed",
+          "statusColor": "green"
+        },
+        {
+          "patientName": "Neha Kapoor",
+          "date": "2025-05-30",
+          "time": "11:30",
+          "type": "Video",
+          "status": "Pending",
+          "statusColor": "yellow"
+        }
+      ],
+
+      "recentActivity": [
+        {
+          "message": "Accepted appointment with Rahul Jain",
+          "time": "2 hours ago",
+          "color": "green"
+        },
+        {
+          "message": "Updated profile details",
+          "time": "Yesterday",
+          "color": "blue"
+        }
+      ],
+
+      "notifications": [
+        {
+          "id": 1,
+          "title": "New Booking",
+          "message": "Patient Neha Kapoor booked an appointment.",
+          "time": "10 min ago",
+          "read": false
+        },
+        {
+          "id": 2,
+          "title": "Reminder",
+          "message": "You have 2 appointments today.",
+          "time": "1 hour ago",
+          "read": true
+        }
+      ]
+    }
+    
+  ],
+   "finance": [
+    {
+      "_id": "trans_001",
+      "pharmacyId": "pharm_001",
+      "pharmacyName": "City Pharmacy",
+      "transactionId": "TXN_ABC123",
+      "date": "2025-05-01T10:30:00Z",
+      "amount": 1250.75,
+      "commission": 125.08,
+      "commissionRate": 0.1,
+      "paymentMethod": "Credit Card",
+      "status": "completed",
+      "orderId": "ORD_001",
+      "customerId": "CUST_001",
+      "items": [
+        {
+          "name": "Paracetamol 500mg",
+          "quantity": 2,
+          "price": 150.00
+        },
+        {
+          "name": "Amoxicillin 250mg",
+          "quantity": 1,
+          "price": 950.75
+        }
+      ]
+    },
+    {
+      "_id": "trans_002",
+      "pharmacyId": "pharm_002",
+      "pharmacyName": "Health Plus Pharmacy",
+      "transactionId": "TXN_XYZ456",
+      "date": "2025-05-02T14:45:00Z",
+      "amount": 450.20,
+      "commission": 45.02,
+      "commissionRate": 0.1,
+      "paymentMethod": "UPI",
+      "status": "pending",
+      "orderId": "ORD_002",
+      "customerId": "CUST_002",
+      "items": [
+        {
+          "name": "Cough Syrup 100ml",
+          "quantity": 1,
+          "price": 250.20
+        },
+        {
+          "name": "Band-Aid Pack",
+          "quantity": 2,
+          "price": 100.00
+        }
+      ]
+    },
+    {
+      "_id": "trans_003",
+      "pharmacyId": "pharm_001",
+      "pharmacyName": "City Pharmacy",
+      "transactionId": "TXN_DEF789",
+      "date": "2025-05-03T09:15:00Z",
+      "amount": 780.50,
+      "commission": 78.05,
+      "commissionRate": 0.1,
+      "paymentMethod": "Cash",
+      "status": "completed",
+      "orderId": "ORD_003",
+      "customerId": "CUST_003",
+      "items": [
+        {
+          "name": "Ibuprofen 400mg",
+          "quantity": 3,
+          "price": 200.00
+        },
+        {
+          "name": "Vitamin C 500mg",
+          "quantity": 1,
+          "price": 180.50
+        }
+      ]
+    },
+    {
+      "_id": "trans_004",
+      "pharmacyId": "pharm_003",
+      "pharmacyName": "Wellness Pharmacy",
+      "transactionId": "TXN_GHI012",
+      "date": "2025-05-04T16:20:00Z",
+      "amount": 300.00,
+      "commission": 30.00,
+      "commissionRate": 0.1,
+      "paymentMethod": "Debit Card",
+      "status": "failed",
+      "orderId": "ORD_004",
+      "customerId": "CUST_004",
+      "items": [
+        {
+          "name": "Antacid Tablets",
+          "quantity": 2,
+          "price": 150.00
+        }
+      ]
+    },
+    {
+      "_id": "trans_005",
+      "pharmacyId": "pharm_002",
+      "pharmacyName": "Health Plus Pharmacy",
+      "transactionId": "TXN_JKL345",
+      "date": "2025-05-05T11:00:00Z",
+      "amount": 950.25,
+      "commission": 95.03,
+      "commissionRate": 0.1,
+      "paymentMethod": "Online",
+      "status": "refunded",
+      "orderId": "ORD_005",
+      "customerId": "CUST_005",
+      "items": [
+        {
+          "name": "Antihistamine 10mg",
+          "quantity": 1,
+          "price": 750.25
+        },
+        {
+          "name": "Face Mask",
+          "quantity": 5,
+          "price": 40.00
+        }
+      ]
+    }
+  ]
+}
