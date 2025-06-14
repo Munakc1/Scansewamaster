@@ -136,6 +136,23 @@ const DoctorDetails = () => {
     inClinicFees: '',
     onlineFees: ''
   });
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    // This will only run on the client side
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    
+    // Set initial value
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // View doctor details
   const handleViewDoctor = (doctor: Doctor) => {
@@ -264,9 +281,6 @@ const DoctorDetails = () => {
   const allSpecializations = Array.from(
     new Set(doctors.flatMap((d) => d.specializations))
   );
-
-  // For smaller screens, we'll adjust the table display
-  const isSmallScreen = window.innerWidth < 768;
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
