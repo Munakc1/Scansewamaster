@@ -44,6 +44,25 @@ export default function LoginPage() {
     router.push('/dashboard');
   };
 
+  const handleDemoLogin = () => {
+    // These are temporary values just for auto-fill
+    const demoPhone = '9876543210';
+    const demoPassword = 'demopassword';
+    
+    // Auto-fill the form fields
+    const phoneInput = document.getElementById('phone') as HTMLInputElement;
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    
+    if (phoneInput && passwordInput) {
+      phoneInput.value = demoPhone;
+      passwordInput.value = demoPassword;
+      setHasError(false);
+      
+      // Show instruction message
+      alert(`Demo credentials filled!\nPhone: ${demoPhone}\nPassword: ${demoPassword}\n\nClick "Sign In" to proceed.`);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
       <div
@@ -98,6 +117,14 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Add Demo Login Button */}
+        <button
+          onClick={handleDemoLogin}
+          className="w-full mt-4 bg-emerald-600 text-white font-semibold py-3 rounded-lg shadow-sm transition-all duration-300 hover:bg-emerald-700"
+        >
+          Quick Demo Login
+        </button>
+
         <p className="text-xs text-center mt-6 text-gray-500">
           By signing in, you agree to our{' '}
           <span className="text-[#0077B6] font-semibold hover:underline cursor-pointer">
@@ -107,7 +134,7 @@ export default function LoginPage() {
           <span className="text-[#0077B6] font-semibold hover:underline cursor-pointer">
             Privacy Policy
           </span>
-          .
+          . For demo access, use the "Quick Demo Login" button.
         </p>
       </div>
     </div>
