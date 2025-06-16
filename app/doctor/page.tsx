@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FaUserMd, FaEdit, FaTrash, FaTimes, FaEye } from 'react-icons/fa';
 import { MdAdd, MdFileUpload, MdDownload, MdFilterList } from 'react-icons/md';
+import { useTheme } from '../components/ThemeContext';
 
 interface Doctor {
   id: string;
@@ -25,6 +26,8 @@ interface Doctor {
 }
 
 const DoctorDetails = () => {
+  const { darkMode } = useTheme();
+  
   // Dummy data
   const dummyDoctors: Doctor[] = [
     {
@@ -139,28 +142,21 @@ const DoctorDetails = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
-    // This will only run on the client side
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 768);
     };
     
-    // Set initial value
     handleResize();
-    
-    // Add event listener
     window.addEventListener('resize', handleResize);
     
-    // Clean up
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // View doctor details
   const handleViewDoctor = (doctor: Doctor) => {
     setCurrentDoctor(doctor);
     setShowViewModal(true);
   };
 
-  // Edit doctor - open form with current data
   const handleEditDoctor = (doctor: Doctor) => {
     setCurrentDoctor(doctor);
     setFormData({
@@ -179,14 +175,12 @@ const DoctorDetails = () => {
     setShowEditModal(true);
   };
 
-  // Delete doctor
   const handleDeleteDoctor = (id: string) => {
     if (confirm('Are you sure you want to delete this doctor?')) {
       setDoctors(doctors.filter(doctor => doctor.id !== id));
     }
   };
 
-  // Save edited doctor
   const handleSaveEdit = () => {
     if (!currentDoctor) return;
     
@@ -216,7 +210,6 @@ const DoctorDetails = () => {
     setShowEditModal(false);
   };
 
-  // Add new doctor
   const handleAddDoctor = () => {
     if (!formData.fullName.trim()) {
       alert('Please enter a full name');
@@ -283,13 +276,13 @@ const DoctorDetails = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'} p-4`}>
       <div className="w-full">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6`}>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Doctor Management</h1>
-            <p className="text-sm text-gray-600 mt-1">Manage and view all registered doctors</p>
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Doctor Management</h1>
+            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-1`}>Manage and view all registered doctors</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button 
@@ -302,7 +295,7 @@ const DoctorDetails = () => {
             <Button 
               onClick={() => alert('Export functionality would go here')}
               variant="outline"
-              className="border-gray-300 text-sm"
+              className={`${darkMode ? 'border-gray-600 hover:bg-gray-700 text-gray-200' : 'border-gray-300'} text-sm`}
               size="sm"
             >
               <MdDownload className="mr-1" /> Export
@@ -311,21 +304,21 @@ const DoctorDetails = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+        <div className={`rounded-lg shadow-sm border p-4 mb-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <Input
                 placeholder="Search doctors..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm h-9"
+                className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} text-sm h-9`}
               />
             </div>
             <div className="sm:w-48">
               <select
                 value={specializationFilter}
                 onChange={(e) => setSpecializationFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none h-9 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border border-gray-300'}`}
               >
                 <option value="all">All Specializations</option>
                 {allSpecializations.map((spec) => (
@@ -337,56 +330,56 @@ const DoctorDetails = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className={`rounded-lg shadow-sm border overflow-hidden ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           {isSmallScreen ? (
             // Mobile-friendly list view
-            <div className="divide-y divide-gray-200">
+            <div className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
               {visibleDoctors.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">
+                <div className={`p-4 text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   No doctors found matching your criteria.
                 </div>
               ) : (
                 visibleDoctors.map((doc) => (
-                  <div key={doc.id} className="p-4 hover:bg-gray-50">
+                  <div key={doc.id} className={`p-4 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                     <div className="flex items-center mb-2">
-                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                        <FaUserMd className="text-blue-600 text-sm" />
+                      <div className={`h-8 w-8 rounded-full ${darkMode ? 'bg-blue-900' : 'bg-blue-100'} flex items-center justify-center mr-3`}>
+                        <FaUserMd className={`${darkMode ? 'text-blue-400' : 'text-blue-600'} text-sm`} />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">{doc.fullName}</h3>
-                        <p className="text-xs text-gray-500">{doc.specializations.join(', ')}</p>
+                        <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{doc.fullName}</h3>
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{doc.specializations.join(', ')}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm mb-2">
-                      <div>
-                        <span className="text-gray-500">Clinic:</span> {doc.clinicName}
+                      <div className={darkMode ? 'text-gray-300' : ''}>
+                        <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Clinic:</span> {doc.clinicName}
                       </div>
-                      <div>
-                        <span className="text-gray-500">Exp:</span> {doc.yearsOfExperience} yrs
+                      <div className={darkMode ? 'text-gray-300' : ''}>
+                        <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Exp:</span> {doc.yearsOfExperience} yrs
                       </div>
-                      <div>
-                        <span className="text-gray-500">City:</span> {doc.city}
+                      <div className={darkMode ? 'text-gray-300' : ''}>
+                        <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>City:</span> {doc.city}
                       </div>
-                      <div>
-                        <span className="text-gray-500">Fees:</span> ₹{doc.consultationFees.inClinic}
+                      <div className={darkMode ? 'text-gray-300' : ''}>
+                        <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Fees:</span> ₹{doc.consultationFees.inClinic}
                       </div>
                     </div>
                     <div className="flex justify-end space-x-2">
                       <button 
                         onClick={() => handleViewDoctor(doc)}
-                        className="text-blue-600 hover:text-blue-800 p-1"
+                        className={`${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'} p-1`}
                       >
                         <FaEye size={14} />
                       </button>
                       <button 
                         onClick={() => handleEditDoctor(doc)}
-                        className="text-green-600 hover:text-green-800 p-1"
+                        className={`${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'} p-1`}
                       >
                         <FaEdit size={14} />
                       </button>
                       <button 
                         onClick={() => handleDeleteDoctor(doc.id)}
-                        className="text-red-600 hover:text-red-800 p-1"
+                        className={`${darkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-800'} p-1`}
                       >
                         <FaTrash size={14} />
                       </button>
@@ -399,47 +392,47 @@ const DoctorDetails = () => {
             // Desktop table view
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
+                <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Doctor
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Specializations
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Exp
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Clinic
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Contact
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Fees
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
                   {visibleDoctors.map((doc) => (
-                    <tr key={doc.id} className="hover:bg-gray-50">
+                    <tr key={doc.id} className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-8 w-8">
-                            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                              <FaUserMd className="text-blue-600 text-sm" />
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-blue-900' : 'bg-blue-100'}`}>
+                              <FaUserMd className={`${darkMode ? 'text-blue-400' : 'text-blue-600'} text-sm`} />
                             </div>
                           </div>
                           <div className="ml-3">
-                            <div className="font-medium text-gray-900">{doc.fullName}</div>
-                            <div className="text-xs text-gray-500">{doc.registrationNumber}</div>
+                            <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{doc.fullName}</div>
+                            <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{doc.registrationNumber}</div>
                           </div>
                         </div>
                       </td>
@@ -448,35 +441,41 @@ const DoctorDetails = () => {
                           {doc.specializations.map((spec, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'}`}
                             >
                               {spec}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className={`px-4 py-3 whitespace-nowrap ${darkMode ? 'text-gray-300' : ''}`}>
                         {doc.yearsOfExperience} yrs
                       </td>
                       <td className="px-4 py-3">
-                        <div>{doc.clinicName}</div>
-                        <div className="text-xs text-gray-500">{doc.city}</div>
+                        <div className={darkMode ? 'text-gray-300' : ''}>{doc.clinicName}</div>
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{doc.city}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div>{doc.phone}</div>
-                        <div className="text-xs text-gray-500">{doc.email}</div>
+                        <div className={darkMode ? 'text-gray-300' : ''}>{doc.phone}</div>
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{doc.email}</div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className={`px-4 py-3 whitespace-nowrap ${darkMode ? 'text-gray-300' : ''}`}>
                         <div>Clinic: ₹{doc.consultationFees.inClinic}</div>
-                        <div className="text-xs text-gray-500">Online: ₹{doc.consultationFees.online}</div>
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Online: ₹{doc.consultationFees.online}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize ${
                           doc.status === 'verified' || doc.status === 'active'
-                            ? 'bg-green-100 text-green-800' 
+                            ? darkMode 
+                              ? 'bg-green-900 text-green-200'
+                              : 'bg-green-100 text-green-800'
                             : doc.status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
+                            ? darkMode
+                              ? 'bg-yellow-900 text-yellow-200'
+                              : 'bg-yellow-100 text-yellow-800'
+                            : darkMode
+                              ? 'bg-red-900 text-red-200'
+                              : 'bg-red-100 text-red-800'
                         }`}>
                           {doc.status}
                         </span>
@@ -485,21 +484,21 @@ const DoctorDetails = () => {
                         <div className="flex gap-2">
                           <button 
                             onClick={() => handleViewDoctor(doc)}
-                            className="text-blue-600 hover:text-blue-800 p-1"
+                            className={`${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'} p-1`}
                             title="View"
                           >
                             <FaEye size={14} />
                           </button>
                           <button 
                             onClick={() => handleEditDoctor(doc)}
-                            className="text-green-600 hover:text-green-800 p-1"
+                            className={`${darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'} p-1`}
                             title="Edit"
                           >
                             <FaEdit size={14} />
                           </button>
                           <button 
                             onClick={() => handleDeleteDoctor(doc.id)}
-                            className="text-red-600 hover:text-red-800 p-1"
+                            className={`${darkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-800'} p-1`}
                             title="Delete"
                           >
                             <FaTrash size={14} />
@@ -510,7 +509,7 @@ const DoctorDetails = () => {
                   ))}
                   {visibleDoctors.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={8} className={`px-6 py-8 text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                         No doctors found matching your criteria.
                       </td>
                     </tr>
@@ -522,7 +521,7 @@ const DoctorDetails = () => {
         </div>
 
         {/* Summary */}
-        <div className="mt-4 text-center text-sm text-gray-600">
+        <div className={`mt-4 text-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           Showing {visibleDoctors.length} of {doctors.length} doctors
         </div>
       </div>
@@ -530,13 +529,13 @@ const DoctorDetails = () => {
       {/* Add Doctor Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Add New Doctor</h2>
+                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Add New Doctor</h2>
                 <button
                   onClick={() => setShowAddForm(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={`${darkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-600'} p-1`}
                 >
                   <FaTimes />
                 </button>
@@ -544,7 +543,7 @@ const DoctorDetails = () => {
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Full Name *
                   </label>
                   <Input
@@ -552,14 +551,14 @@ const DoctorDetails = () => {
                     value={formData.fullName}
                     onChange={handleFormChange}
                     required
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     placeholder="Dr. John Smith"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Years of Experience
                     </label>
                     <Input
@@ -568,20 +567,20 @@ const DoctorDetails = () => {
                       min="0"
                       value={formData.yearsOfExperience}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                       placeholder="10"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Status
                     </label>
                     <select
                       name="status"
                       value={formData.status}
                       onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                      className={`w-full rounded-md px-2 py-1 text-sm focus:outline-none h-9 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border border-gray-300'}`}
                     >
                       <option value="active">Active</option>
                       <option value="pending">Pending</option>
@@ -592,47 +591,47 @@ const DoctorDetails = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Clinic Name
                   </label>
                   <Input
                     name="clinicName"
                     value={formData.clinicName}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     placeholder="City Health Center"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     City
                   </label>
                   <Input
                     name="city"
                     value={formData.city}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     placeholder="Mumbai"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Registration Number
                   </label>
                   <Input
                     name="registrationNumber"
                     value={formData.registrationNumber}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     placeholder="MC123456"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Phone Number
                     </label>
                     <Input
@@ -640,13 +639,13 @@ const DoctorDetails = () => {
                       type="tel"
                       value={formData.phone}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                       placeholder="+1234567890"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Email Address
                     </label>
                     <Input
@@ -654,7 +653,7 @@ const DoctorDetails = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                       placeholder="doctor@example.com"
                     />
                   </div>
@@ -662,7 +661,7 @@ const DoctorDetails = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       In-Clinic Fees (₹)
                     </label>
                     <Input
@@ -671,12 +670,12 @@ const DoctorDetails = () => {
                       min="0"
                       value={formData.inClinicFees}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                       placeholder="800"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Online Fees (₹)
                     </label>
                     <Input
@@ -685,24 +684,24 @@ const DoctorDetails = () => {
                       min="0"
                       value={formData.onlineFees}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                       placeholder="700"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Specializations
                   </label>
                   <Input
                     name="specializations"
                     value={formData.specializations}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     placeholder="Cardiology, Internal Medicine"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Separate with commas</p>
+                  <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Separate with commas</p>
                 </div>
 
                 <div className="flex gap-3 pt-2">
@@ -710,7 +709,7 @@ const DoctorDetails = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowAddForm(false)}
-                    className="flex-1 h-9 text-sm"
+                    className={`flex-1 h-9 text-sm ${darkMode ? 'border-gray-600 hover:bg-gray-700 text-gray-200' : ''}`}
                   >
                     Cancel
                   </Button>
@@ -730,13 +729,13 @@ const DoctorDetails = () => {
       {/* View Doctor Modal */}
       {showViewModal && currentDoctor && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Doctor Details</h2>
+                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Doctor Details</h2>
                 <button
                   onClick={() => setShowViewModal(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={`${darkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-600'} p-1`}
                 >
                   <FaTimes />
                 </button>
@@ -744,41 +743,41 @@ const DoctorDetails = () => {
               
               <div className="space-y-4">
                 <div className="flex items-center">
-                  <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                    <FaUserMd className="text-blue-600 text-2xl" />
+                  <div className={`h-16 w-16 rounded-full flex items-center justify-center mr-4 ${darkMode ? 'bg-blue-900' : 'bg-blue-100'}`}>
+                    <FaUserMd className={`${darkMode ? 'text-blue-400' : 'text-blue-600'} text-2xl`} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900">{currentDoctor.fullName}</h3>
-                    <p className="text-sm text-gray-500">{currentDoctor.registrationNumber}</p>
+                    <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{currentDoctor.fullName}</h3>
+                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{currentDoctor.registrationNumber}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700">Experience</h4>
-                    <p className="text-sm">{currentDoctor.yearsOfExperience} years</p>
+                    <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Experience</h4>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>{currentDoctor.yearsOfExperience} years</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700">Status</h4>
-                    <p className="text-sm capitalize">{currentDoctor.status}</p>
+                    <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Status</h4>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>{currentDoctor.status}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700">Clinic</h4>
-                    <p className="text-sm">{currentDoctor.clinicName}</p>
+                    <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Clinic</h4>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>{currentDoctor.clinicName}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700">City</h4>
-                    <p className="text-sm">{currentDoctor.city}</p>
+                    <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>City</h4>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>{currentDoctor.city}</p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700">Specializations</h4>
+                  <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Specializations</h4>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {currentDoctor.specializations.map((spec, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'}`}
                       >
                         {spec}
                       </span>
@@ -788,14 +787,14 @@ const DoctorDetails = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700">Contact</h4>
-                    <p className="text-sm">{currentDoctor.phone}</p>
-                    <p className="text-sm text-gray-500">{currentDoctor.email}</p>
+                    <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Contact</h4>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>{currentDoctor.phone}</p>
+                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{currentDoctor.email}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700">Consultation Fees</h4>
-                    <p className="text-sm">In-Clinic: ₹{currentDoctor.consultationFees.inClinic}</p>
-                    <p className="text-sm">Online: ₹{currentDoctor.consultationFees.online}</p>
+                    <h4 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Consultation Fees</h4>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>In-Clinic: ₹{currentDoctor.consultationFees.inClinic}</p>
+                    <p className={`text-sm ${darkMode ? 'text-gray-300' : ''}`}>Online: ₹{currentDoctor.consultationFees.online}</p>
                   </div>
                 </div>
 
@@ -816,13 +815,13 @@ const DoctorDetails = () => {
       {/* Edit Doctor Modal */}
       {showEditModal && currentDoctor && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Edit Doctor</h2>
+                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Edit Doctor</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={`${darkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-600'} p-1`}
                 >
                   <FaTimes />
                 </button>
@@ -830,7 +829,7 @@ const DoctorDetails = () => {
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Full Name *
                   </label>
                   <Input
@@ -838,13 +837,13 @@ const DoctorDetails = () => {
                     value={formData.fullName}
                     onChange={handleFormChange}
                     required
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Years of Experience
                     </label>
                     <Input
@@ -853,19 +852,19 @@ const DoctorDetails = () => {
                       min="0"
                       value={formData.yearsOfExperience}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Status
                     </label>
                     <select
                       name="status"
                       value={formData.status}
                       onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                      className={`w-full rounded-md px-2 py-1 text-sm focus:outline-none h-9 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border border-gray-300'}`}
                     >
                       <option value="active">Active</option>
                       <option value="pending">Pending</option>
@@ -876,44 +875,44 @@ const DoctorDetails = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Clinic Name
                   </label>
                   <Input
                     name="clinicName"
                     value={formData.clinicName}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     City
                   </label>
                   <Input
                     name="city"
                     value={formData.city}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Registration Number
                   </label>
                   <Input
                     name="registrationNumber"
                     value={formData.registrationNumber}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Phone Number
                     </label>
                     <Input
@@ -921,12 +920,12 @@ const DoctorDetails = () => {
                       type="tel"
                       value={formData.phone}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Email Address
                     </label>
                     <Input
@@ -934,14 +933,14 @@ const DoctorDetails = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       In-Clinic Fees (₹)
                     </label>
                     <Input
@@ -950,11 +949,11 @@ const DoctorDetails = () => {
                       min="0"
                       value={formData.inClinicFees}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                       Online Fees (₹)
                     </label>
                     <Input
@@ -963,20 +962,20 @@ const DoctorDetails = () => {
                       min="0"
                       value={formData.onlineFees}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Specializations
                   </label>
                   <Input
                     name="specializations"
                     value={formData.specializations}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-9 text-sm"
+                    className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'} h-9 text-sm`}
                     placeholder="Separate with commas"
                   />
                 </div>
@@ -986,7 +985,7 @@ const DoctorDetails = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowEditModal(false)}
-                    className="flex-1 h-9 text-sm"
+                    className={`flex-1 h-9 text-sm ${darkMode ? 'border-gray-600 hover:bg-gray-700 text-gray-200' : ''}`}
                   >
                     Cancel
                   </Button>

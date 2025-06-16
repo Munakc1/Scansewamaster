@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FaSearch, FaFilter, FaFileUpload, FaFileDownload, FaTimes, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
+import { useTheme } from '../components/ThemeContext';
 
 interface Medicine {
   id: string;
@@ -14,7 +15,7 @@ interface Medicine {
   manufacturer: string;
   expiryDate: string;
   quantity: number;
-   unit: 'tablets' | 'bottles' | 'tubes' | 'vials' | 'capsules';
+  unit: 'tablets' | 'bottles' | 'tubes' | 'vials' | 'capsules';
   pricePerUnit: number;
   category: 'antibiotic' | 'analgesic' | 'antihistamine' | 'antacid' | 'other';
   stockStatus: 'in-stock' | 'low-stock' | 'out-of-stock';
@@ -96,6 +97,7 @@ const dummyMedicines: Medicine[] = [
 ];
 
 const MedicineStock = () => {
+  const { darkMode } = useTheme();
   const [medicines, setMedicines] = useState<Medicine[]>(dummyMedicines);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -226,39 +228,55 @@ const MedicineStock = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'in-stock':
-        return 'bg-green-100 text-green-800';
+        return darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800';
       case 'low-stock':
-        return 'bg-yellow-100 text-yellow-800';
+        return darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800';
       case 'out-of-stock':
-        return 'bg-red-100 text-red-800';
+        return darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'antibiotic':
-        return 'bg-blue-100 text-blue-800';
+        return darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800';
       case 'analgesic':
-        return 'bg-purple-100 text-purple-800';
+        return darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800';
       case 'antihistamine':
-        return 'bg-indigo-100 text-indigo-800';
+        return darkMode ? 'bg-indigo-900 text-indigo-200' : 'bg-indigo-100 text-indigo-800';
       case 'antacid':
-        return 'bg-pink-100 text-pink-800';
+        return darkMode ? 'bg-pink-900 text-pink-200' : 'bg-pink-100 text-pink-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
     }
   };
 
+  const getInputClasses = () => {
+    return darkMode 
+      ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-blue-500' 
+      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
+  };
+
+  const getSelectClasses = () => {
+    return darkMode 
+      ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-blue-500' 
+      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       <div className="w-full p-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 rounded-lg ${
+          darkMode ? 'bg-gray-800' : 'bg-white shadow-sm'
+        }`}>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Medicine Stock Management</h1>
-            <p className="text-sm text-gray-600 mt-1">View and manage medicine inventory</p>
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Medicine Stock Management</h1>
+            <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              View and manage medicine inventory
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button 
@@ -270,21 +288,21 @@ const MedicineStock = () => {
             <Button 
               onClick={handleImport}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <FaFileUpload className="mr-1" /> Import
             </Button>
             <Button 
               onClick={() => handleExport('csv')}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <FaFileDownload className="mr-1" /> CSV
             </Button>
             <Button 
               onClick={() => handleExport('json')}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <FaFileDownload className="mr-1" /> JSON
             </Button>
@@ -292,7 +310,9 @@ const MedicineStock = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+        <div className={`rounded-lg p-4 mb-4 ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200 shadow-sm border'
+        }`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="col-span-1 md:col-span-1">
               <div className="relative">
@@ -300,16 +320,16 @@ const MedicineStock = () => {
                   placeholder="Search medicines..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 pl-8 text-sm h-9"
+                  className={`${getInputClasses()} pl-8 text-sm h-9`}
                 />
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                <FaSearch className={`absolute left-3 top-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               </div>
             </div>
             <div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none h-9 ${getSelectClasses()}`}
               >
                 <option value="all">All Statuses</option>
                 {allStatuses.map((status) => (
@@ -323,7 +343,7 @@ const MedicineStock = () => {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none h-9 ${getSelectClasses()}`}
               >
                 <option value="all">All Categories</option>
                 {allCategories.map((category) => (
@@ -337,11 +357,17 @@ const MedicineStock = () => {
         </div>
 
         {/* Medicines Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className={`rounded-lg overflow-hidden ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200 shadow-sm border'
+        }`}>
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-600">Loading medicines...</p>
+              <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${
+                darkMode ? 'border-blue-500' : 'border-blue-600'
+              } mx-auto`}></div>
+              <p className={`mt-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Loading medicines...
+              </p>
             </div>
           ) : error ? (
             <div className="p-8 text-center">
@@ -349,65 +375,85 @@ const MedicineStock = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y text-sm">
+                <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Medicine ID
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Name
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Generic Name
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Batch
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Expiry
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Quantity
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Category
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${
+                  darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'
+                }`}>
                   {visibleMedicines.map((medicine) => (
-                    <tr key={medicine.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={medicine.id} className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{medicine.id}</div>
+                        <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{medicine.id}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">{medicine.name}</div>
-                        <div className="text-xs text-gray-500">{medicine.manufacturer}</div>
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>{medicine.name}</div>
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{medicine.manufacturer}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">{medicine.genericName}</div>
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>{medicine.genericName}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">{medicine.batchNumber}</div>
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>{medicine.batchNumber}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>
                           {new Date(medicine.expiryDate).toLocaleDateString()}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           {Math.floor((new Date(medicine.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days left
                         </div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">{medicine.quantity}</div>
-                        <div className="text-xs text-gray-500 capitalize">{medicine.unit}</div>
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>{medicine.quantity}</div>
+                        <div className={`text-xs capitalize ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{medicine.unit}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(medicine.stockStatus)}`}>
@@ -425,7 +471,9 @@ const MedicineStock = () => {
                             onClick={() => viewMedicineDetails(medicine)}
                             variant="outline"
                             size="sm"
-                            className="h-7 w-7 p-0"
+                            className={`h-7 w-7 p-0 ${
+                              darkMode ? 'hover:bg-gray-700' : ''
+                            }`}
                             title="View"
                           >
                             <FaEye className="text-sm" />
@@ -434,7 +482,9 @@ const MedicineStock = () => {
                             onClick={() => editMedicine(medicine)}
                             variant="outline"
                             size="sm"
-                            className="h-7 w-7 p-0"
+                            className={`h-7 w-7 p-0 ${
+                              darkMode ? 'hover:bg-gray-700' : ''
+                            }`}
                             title="Edit"
                           >
                             <FaEdit className="text-sm" />
@@ -443,7 +493,9 @@ const MedicineStock = () => {
                             onClick={() => deleteMedicine(medicine.id)}
                             variant="outline"
                             size="sm"
-                            className="h-7 w-7 p-0 text-red-600 border-red-200 hover:bg-red-50"
+                            className={`h-7 w-7 p-0 ${
+                              darkMode ? 'text-red-400 border-red-700 hover:bg-gray-700' : 'text-red-600 border-red-200 hover:bg-red-50'
+                            }`}
                             title="Delete"
                           >
                             <FaTrash className="text-sm" />
@@ -454,8 +506,10 @@ const MedicineStock = () => {
                   ))}
                   {visibleMedicines.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="px-4 py-6 text-center text-gray-500">
-                        No medicines found matching your criteria.
+                      <td colSpan={9} className="px-4 py-6 text-center">
+                        <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
+                          No medicines found matching your criteria.
+                        </p>
                       </td>
                     </tr>
                   )}
@@ -466,7 +520,9 @@ const MedicineStock = () => {
         </div>
 
         {/* Summary */}
-        <div className="mt-4 text-center text-sm text-gray-600">
+        <div className={`mt-4 text-center text-sm ${
+          darkMode ? 'text-gray-400' : 'text-gray-600'
+        }`}>
           Showing {visibleMedicines.length} of {medicines.length} medicines
         </div>
       </div>
@@ -474,15 +530,19 @@ const MedicineStock = () => {
       {/* Medicine Details Modal */}
       {showMedicineDetails && selectedMedicine && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto ${
+            darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
+          }`}>
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className={`text-xl font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                   {showEditForm ? 'Edit Medicine' : 'Medicine Details'} - {selectedMedicine.id}
                 </h2>
                 <button
                   onClick={() => setShowMedicineDetails(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
                 >
                   <FaTimes />
                 </button>
@@ -492,56 +552,68 @@ const MedicineStock = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Medicine Name</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Medicine Name</label>
                       <Input
                         type="text"
                         defaultValue={selectedMedicine.name}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Generic Name</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Generic Name</label>
                       <Input
                         type="text"
                         defaultValue={selectedMedicine.genericName}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Batch Number</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Batch Number</label>
                       <Input
                         type="text"
                         defaultValue={selectedMedicine.batchNumber}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Manufacturer</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Manufacturer</label>
                       <Input
                         type="text"
                         defaultValue={selectedMedicine.manufacturer}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Expiry Date</label>
                       <Input
                         type="date"
                         defaultValue={selectedMedicine.expiryDate}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Category</label>
                       <select
                         defaultValue={selectedMedicine.category}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none ${getSelectClasses()}`}
                       >
                         {allCategories.map((category) => (
                           <option key={category} value={category}>
@@ -554,18 +626,22 @@ const MedicineStock = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Quantity</label>
                       <Input
                         type="number"
                         defaultValue={selectedMedicine.quantity}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Unit</label>
                       <select
                         defaultValue={selectedMedicine.unit}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none ${getSelectClasses()}`}
                       >
                         <option value="tablets">Tablets</option>
                         <option value="bottles">Bottles</option>
@@ -577,19 +653,23 @@ const MedicineStock = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Price Per Unit</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Price Per Unit</label>
                       <Input
                         type="number"
                         step="0.01"
                         defaultValue={selectedMedicine.pricePerUnit}
-                        className="w-full"
+                        className={getInputClasses()}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Stock Status</label>
+                      <label className={`block text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Stock Status</label>
                       <select
                         defaultValue={selectedMedicine.stockStatus}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none ${getSelectClasses()}`}
                       >
                         {allStatuses.map((status) => (
                           <option key={status} value={status}>
@@ -617,7 +697,9 @@ const MedicineStock = () => {
                     <Button
                       onClick={() => setShowEditForm(false)}
                       variant="outline"
-                      className="flex-1 text-sm h-9"
+                      className={`flex-1 text-sm h-9 ${
+                        darkMode ? 'hover:bg-gray-700' : ''
+                      }`}
                     >
                       Cancel
                     </Button>
@@ -627,45 +709,61 @@ const MedicineStock = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-1">Medicine Information</h3>
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-sm font-medium">{selectedMedicine.name}</p>
-                        <p className="text-xs text-gray-500">Generic: {selectedMedicine.genericName}</p>
+                      <h3 className={`text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Medicine Information</h3>
+                      <div className={`p-3 rounded-md ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                        <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedMedicine.name}</p>
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Generic: {selectedMedicine.genericName}</p>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-1">Manufacturer & Batch</h3>
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-sm font-medium">{selectedMedicine.manufacturer}</p>
-                        <p className="text-xs text-gray-500">Batch: {selectedMedicine.batchNumber}</p>
+                      <h3 className={`text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Manufacturer & Batch</h3>
+                      <div className={`p-3 rounded-md ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                        <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedMedicine.manufacturer}</p>
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Batch: {selectedMedicine.batchNumber}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-1">Expiry Date</h3>
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-sm font-medium">
+                      <h3 className={`text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Expiry Date</h3>
+                      <div className={`p-3 rounded-md ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                        <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           {new Date(selectedMedicine.expiryDate).toLocaleDateString()}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           {Math.floor((new Date(selectedMedicine.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days remaining
                         </p>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-1">Stock Information</h3>
-                      <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className={`text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Stock Information</h3>
+                      <div className={`p-3 rounded-md ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
                         <div className="flex justify-between">
-                          <span className="text-sm font-medium">
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                             {selectedMedicine.quantity} {selectedMedicine.unit}
                           </span>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedMedicine.stockStatus)}`}>
                             {selectedMedicine.stockStatus.replace('-', ' ')}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           Last updated: {new Date(selectedMedicine.lastUpdated).toLocaleString()}
                         </p>
                       </div>
@@ -674,20 +772,28 @@ const MedicineStock = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-1">Category</h3>
-                      <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className={`text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Category</h3>
+                      <div className={`p-3 rounded-md ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getCategoryColor(selectedMedicine.category)}`}>
                           {selectedMedicine.category}
                         </span>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-1">Pricing</h3>
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-sm font-medium">
+                      <h3 className={`text-sm font-medium mb-1 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Pricing</h3>
+                      <div className={`p-3 rounded-md ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                        <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           ${selectedMedicine.pricePerUnit.toFixed(2)} per {selectedMedicine.unit.slice(0, -1)}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           Total value: ${(selectedMedicine.pricePerUnit * selectedMedicine.quantity).toFixed(2)}
                         </p>
                       </div>
@@ -698,7 +804,9 @@ const MedicineStock = () => {
                     <Button
                       onClick={() => setShowMedicineDetails(false)}
                       variant="outline"
-                      className="flex-1 text-sm h-9"
+                      className={`flex-1 text-sm h-9 ${
+                        darkMode ? 'hover:bg-gray-700' : ''
+                      }`}
                     >
                       Close
                     </Button>

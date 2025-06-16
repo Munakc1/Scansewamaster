@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FaFileMedical, FaSearch, FaFilter, FaFileUpload, FaFileDownload, FaTimes } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
+import { useTheme } from '../components/ThemeContext';
 
 interface Order {
   id: string;
@@ -105,6 +106,7 @@ const dummyOrders: Order[] = [
 ];
 
 const OrderManagement = () => {
+  const { darkMode } = useTheme();
   const [orders, setOrders] = useState<Order[]>(dummyOrders);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -215,63 +217,67 @@ const OrderManagement = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800';
       case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
+        return darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-orange-100 text-orange-800';
+        return darkMode ? 'bg-orange-900 text-orange-200' : 'bg-orange-100 text-orange-800';
       case 'stat':
-        return 'bg-red-100 text-red-800';
+        return darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
     }
   };
 
+  const getItemBadgeColor = () => {
+    return darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800';
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       <div className="w-full p-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6`}>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Orders Management</h1>
-            <p className="text-sm text-gray-600 mt-1">View and manage all medical orders</p>
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Orders Management</h1>
+            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-1`}>View and manage all medical orders</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button 
               onClick={() => alert('Create new order functionality would go here')}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm h-9"
+              className={`bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 ${darkMode ? 'ring-offset-gray-900' : ''}`}
             >
               <MdAdd className="mr-1" /> New Order
             </Button>
             <Button 
               onClick={handleImport}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`border-gray-300 text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-800 hover:text-white' : ''}`}
             >
               <FaFileUpload className="mr-1" /> Import
             </Button>
             <Button 
               onClick={() => handleExport('csv')}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`border-gray-300 text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-800 hover:text-white' : ''}`}
             >
               <FaFileDownload className="mr-1" /> CSV
             </Button>
             <Button 
               onClick={() => handleExport('json')}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`border-gray-300 text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-800 hover:text-white' : ''}`}
             >
               <FaFileDownload className="mr-1" /> JSON
             </Button>
@@ -279,7 +285,9 @@ const OrderManagement = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+        <div className={`rounded-lg shadow-sm border p-4 mb-4 ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        }`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="col-span-1 md:col-span-1">
               <div className="relative">
@@ -287,16 +295,20 @@ const OrderManagement = () => {
                   placeholder="Search orders..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 pl-8 text-sm h-9"
+                  className={`border-gray-300 focus:border-blue-500 focus:ring-blue-500 pl-8 text-sm h-9 ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : ''
+                  }`}
                 />
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                <FaSearch className={`absolute left-3 top-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               </div>
             </div>
             <div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full border rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9 ${
+                  darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-300'
+                }`}
               >
                 <option value="all">All Statuses</option>
                 {allStatuses.map((status) => (
@@ -310,7 +322,9 @@ const OrderManagement = () => {
               <select
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full border rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9 ${
+                  darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-300'
+                }`}
               >
                 <option value="all">All Priorities</option>
                 {allPriorities.map((priority) => (
@@ -324,69 +338,93 @@ const OrderManagement = () => {
         </div>
 
         {/* Orders Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className={`rounded-lg shadow-sm border overflow-hidden ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        }`}>
           {loading ? (
-            <div className="p-8 text-center">
+            <div className={`p-8 text-center ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-600">Loading orders...</p>
+              <p className="mt-2 text-sm">Loading orders...</p>
             </div>
           ) : error ? (
-            <div className="p-8 text-center">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="p-8 text-center text-red-600 text-sm">
+              {error}
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y text-sm">
+                <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Order ID
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Patient
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Doctor
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Date & Time
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Items
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Amount
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Priority
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${
+                  darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'
+                }`}>
                   {visibleOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={order.id} className={`transition-colors ${
+                      darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                    }`}>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{order.id}</div>
+                        <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{order.id}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">{order.patientName}</div>
-                        <div className="text-xs text-gray-500">ID: {order.patientId}</div>
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>{order.patientName}</div>
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>ID: {order.patientId}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">{order.doctorName}</div>
-                        <div className="text-xs text-gray-500">ID: {order.doctorId}</div>
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>{order.doctorName}</div>
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>ID: {order.doctorId}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-gray-900">
+                        <div className={darkMode ? 'text-white' : 'text-gray-900'}>
                           {new Date(order.orderDate).toLocaleDateString()}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           {new Date(order.orderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
@@ -395,19 +433,23 @@ const OrderManagement = () => {
                           {order.items.slice(0, 2).map((item, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'
+                              }`}
                             >
                               {item.name}
                             </span>
                           ))}
                           {order.items.length > 2 && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                              darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-800'
+                            }`}>
                               +{order.items.length - 2} more
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                      <td className={`px-4 py-3 whitespace-nowrap ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         ₹{order.totalAmount}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
@@ -426,7 +468,7 @@ const OrderManagement = () => {
                         <Button
                           onClick={() => viewOrderDetails(order)}
                           variant="outline"
-                          className="text-xs h-7"
+                          className={`text-xs h-7 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : ''}`}
                         >
                           View
                         </Button>
@@ -435,7 +477,9 @@ const OrderManagement = () => {
                   ))}
                   {visibleOrders.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="px-4 py-6 text-center text-gray-500">
+                      <td colSpan={9} className={`px-4 py-6 text-center ${
+                        darkMode ? 'text-gray-400' : 'text-gray-500'
+                      }`}>
                         No orders found matching your criteria.
                       </td>
                     </tr>
@@ -447,7 +491,9 @@ const OrderManagement = () => {
         </div>
 
         {/* Summary */}
-        <div className="mt-4 text-center text-sm text-gray-600">
+        <div className={`mt-4 text-center text-sm ${
+          darkMode ? 'text-gray-400' : 'text-gray-600'
+        }`}>
           Showing {visibleOrders.length} of {orders.length} orders
         </div>
       </div>
@@ -455,13 +501,17 @@ const OrderManagement = () => {
       {/* Order Details Modal */}
       {showOrderDetails && selectedOrder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto ${
+            darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
+          }`}>
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Order Details - {selectedOrder.id}</h2>
+                <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Order Details - {selectedOrder.id}
+                </h2>
                 <button
                   onClick={() => setShowOrderDetails(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={`p-1 ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   <FaTimes />
                 </button>
@@ -470,73 +520,85 @@ const OrderManagement = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Patient Information</h3>
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <p className="text-sm font-medium">{selectedOrder.patientName}</p>
-                      <p className="text-xs text-gray-500">ID: {selectedOrder.patientId}</p>
+                    <h3 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      Patient Information
+                    </h3>
+                    <div className={`p-3 rounded-md ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                      <p className={`text-sm font-medium ${darkMode ? 'text-white' : ''}`}>{selectedOrder.patientName}</p>
+                      <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>ID: {selectedOrder.patientId}</p>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Doctor Information</h3>
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <p className="text-sm font-medium">{selectedOrder.doctorName}</p>
-                      <p className="text-xs text-gray-500">ID: {selectedOrder.doctorId}</p>
+                    <h3 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      Doctor Information
+                    </h3>
+                    <div className={`p-3 rounded-md ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                      <p className={`text-sm font-medium ${darkMode ? 'text-white' : ''}`}>{selectedOrder.doctorName}</p>
+                      <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>ID: {selectedOrder.doctorId}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">Order Information</h3>
-                  <div className="bg-gray-50 p-3 rounded-md">
+                  <h3 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                    Order Information
+                  </h3>
+                  <div className={`p-3 rounded-md ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
                     <div className="grid grid-cols-2 gap-4 mb-2">
                       <div>
-                        <p className="text-xs text-gray-500">Order Date</p>
-                        <p className="text-sm font-medium">
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Order Date</p>
+                        <p className={`text-sm font-medium ${darkMode ? 'text-white' : ''}`}>
                           {new Date(selectedOrder.orderDate).toLocaleString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Priority</p>
-                        <p className="text-sm font-medium capitalize">
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Priority</p>
+                        <p className={`text-sm font-medium capitalize ${darkMode ? 'text-white' : ''}`}>
                           {selectedOrder.priority}
                         </p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-gray-500">Current Status</p>
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Current Status</p>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedOrder.status)}`}>
                           {selectedOrder.status.replace('-', ' ')}
                         </span>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Total Amount</p>
-                        <p className="text-sm font-medium">₹{selectedOrder.totalAmount}</p>
+                        <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Total Amount</p>
+                        <p className={`text-sm font-medium ${darkMode ? 'text-white' : ''}`}>₹{selectedOrder.totalAmount}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">Order Items</h3>
+                  <h3 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                    Order Items
+                  </h3>
                   <div className="space-y-2">
                     {selectedOrder.items.map((item, index) => (
-                      <div key={index} className="border border-gray-200 rounded-md p-3">
+                      <div key={index} className={`border rounded-md p-3 ${
+                        darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                      }`}>
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="text-sm font-medium">{item.name}</p>
-                            <p className="text-xs text-gray-500 capitalize">{item.type}</p>
+                            <p className={`text-sm font-medium ${darkMode ? 'text-white' : ''}`}>{item.name}</p>
+                            <p className={`text-xs capitalize ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.type}</p>
                           </div>
                           {item.quantity && (
-                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            <span className={`text-xs px-2 py-1 rounded ${
+                              darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'
+                            }`}>
                               Qty: {item.quantity}
                             </span>
                           )}
                         </div>
                         {item.instructions && (
                           <div className="mt-2">
-                            <p className="text-xs text-gray-500">Instructions:</p>
-                            <p className="text-xs font-medium">{item.instructions}</p>
+                            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Instructions:</p>
+                            <p className={`text-xs font-medium ${darkMode ? 'text-gray-300' : ''}`}>{item.instructions}</p>
                           </div>
                         )}
                       </div>
@@ -545,13 +607,15 @@ const OrderManagement = () => {
                 </div>
 
                 <div className="pt-4">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Update Status</h3>
+                  <h3 className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                    Update Status
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedOrder.status !== 'pending' && (
                       <Button
                         onClick={() => updateOrderStatus(selectedOrder.id, 'pending')}
                         variant="outline"
-                        className="text-xs h-8"
+                        className={`text-xs h-8 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : ''}`}
                       >
                         Mark as Pending
                       </Button>
@@ -560,7 +624,11 @@ const OrderManagement = () => {
                       <Button
                         onClick={() => updateOrderStatus(selectedOrder.id, 'in-progress')}
                         variant="outline"
-                        className="text-xs h-8 bg-blue-50 text-blue-700 border-blue-200"
+                        className={`text-xs h-8 ${
+                          darkMode 
+                            ? 'bg-blue-900 text-blue-200 border-blue-800 hover:bg-blue-800' 
+                            : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                        }`}
                       >
                         Mark as In Progress
                       </Button>
@@ -569,7 +637,11 @@ const OrderManagement = () => {
                       <Button
                         onClick={() => updateOrderStatus(selectedOrder.id, 'completed')}
                         variant="outline"
-                        className="text-xs h-8 bg-green-50 text-green-700 border-green-200"
+                        className={`text-xs h-8 ${
+                          darkMode 
+                            ? 'bg-green-900 text-green-200 border-green-800 hover:bg-green-800' 
+                            : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                        }`}
                       >
                         Mark as Completed
                       </Button>
@@ -578,7 +650,11 @@ const OrderManagement = () => {
                       <Button
                         onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled')}
                         variant="outline"
-                        className="text-xs h-8 bg-red-50 text-red-700 border-red-200"
+                        className={`text-xs h-8 ${
+                          darkMode 
+                            ? 'bg-red-900 text-red-200 border-red-800 hover:bg-red-800' 
+                            : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                        }`}
                       >
                         Cancel Order
                       </Button>
@@ -590,13 +666,17 @@ const OrderManagement = () => {
                   <Button
                     onClick={() => setShowOrderDetails(false)}
                     variant="outline"
-                    className="flex-1 text-sm h-9"
+                    className={`flex-1 text-sm h-9 ${
+                      darkMode ? 'border-gray-600 hover:bg-gray-700' : ''
+                    }`}
                   >
                     Close
                   </Button>
                   <Button
                     onClick={() => alert('Print order functionality would go here')}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm h-9"
+                    className={`flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 ${
+                      darkMode ? 'ring-offset-gray-800' : ''
+                    }`}
                   >
                     Print Order
                   </Button>

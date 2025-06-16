@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FaAmbulance, FaSearch, FaFilter, FaFileUpload, FaFileDownload, FaTimes, FaEdit, FaTrash, FaEye, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
+import { useTheme } from '../components/ThemeContext';
 
 interface Ambulance {
   id: string;
@@ -67,6 +68,7 @@ const dummyAmbulances: Ambulance[] = [
 ];
 
 const AmbulanceManagement = () => {
+  const { darkMode } = useTheme();
   const [ambulances, setAmbulances] = useState<Ambulance[]>(dummyAmbulances);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -253,24 +255,40 @@ const AmbulanceManagement = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-800';
+        return darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800';
       case 'on-call':
-        return 'bg-blue-100 text-blue-800';
+        return darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800';
       case 'maintenance':
-        return 'bg-yellow-100 text-yellow-800';
+        return darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
     }
   };
 
+  const getInputClasses = () => {
+    return darkMode 
+      ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-blue-500' 
+      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
+  };
+
+  const getSelectClasses = () => {
+    return darkMode 
+      ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-blue-500' 
+      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       <div className="w-full p-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 rounded-lg ${
+          darkMode ? 'bg-gray-800' : 'bg-white shadow-sm'
+        }`}>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Ambulance Management</h1>
-            <p className="text-sm text-gray-600 mt-1">Manage ambulance fleet and dispatch</p>
+            <h1 className="text-2xl font-bold">Ambulance Management</h1>
+            <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Manage ambulance fleet and dispatch
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button 
@@ -282,21 +300,21 @@ const AmbulanceManagement = () => {
             <Button 
               onClick={handleImport}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <FaFileUpload className="mr-1" /> Import
             </Button>
             <Button 
               onClick={() => handleExport('csv')}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <FaFileDownload className="mr-1" /> CSV
             </Button>
             <Button 
               onClick={() => handleExport('json')}
               variant="outline"
-              className="border-gray-300 text-sm h-9"
+              className={`text-sm h-9 ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <FaFileDownload className="mr-1" /> JSON
             </Button>
@@ -304,7 +322,9 @@ const AmbulanceManagement = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+        <div className={`rounded-lg p-4 mb-4 ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200 shadow-sm border'
+        }`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="col-span-1 md:col-span-1">
               <div className="relative">
@@ -312,16 +332,16 @@ const AmbulanceManagement = () => {
                   placeholder="Search ambulances..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 pl-8 text-sm h-9"
+                  className={`${getInputClasses()} pl-8 text-sm h-9`}
                 />
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                <FaSearch className={`absolute left-3 top-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               </div>
             </div>
             <div>
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none h-9 ${getSelectClasses()}`}
               >
                 <option value="all">All Types</option>
                 {allTypes.map((type) => (
@@ -333,7 +353,7 @@ const AmbulanceManagement = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-9"
+                className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none h-9 ${getSelectClasses()}`}
               >
                 <option value="all">All Statuses</option>
                 {allStatuses.map((status) => (
@@ -347,11 +367,17 @@ const AmbulanceManagement = () => {
         </div>
 
         {/* Ambulances Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className={`rounded-lg overflow-hidden ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200 shadow-sm border'
+        }`}>
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-600">Loading ambulances...</p>
+              <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${
+                darkMode ? 'border-blue-500' : 'border-blue-600'
+              } mx-auto`}></div>
+              <p className={`mt-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Loading ambulances...
+              </p>
             </div>
           ) : error ? (
             <div className="p-8 text-center">
@@ -359,62 +385,96 @@ const AmbulanceManagement = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y text-sm">
+                <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Ambulance
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Driver
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Type
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Location
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Base Station
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-4 py-3 text-left font-medium uppercase tracking-wider ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${
+                  darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'
+                }`}>
                   {visibleAmbulances.map((amb) => (
-                    <tr key={amb.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={amb.id} className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 bg-red-100 rounded-md flex items-center justify-center">
-                            <FaAmbulance className="text-red-600" />
+                          <div className={`flex-shrink-0 h-10 w-10 rounded-md flex items-center justify-center ${
+                            darkMode ? 'bg-red-900' : 'bg-red-100'
+                          }`}>
+                            <FaAmbulance className={darkMode ? 'text-red-300' : 'text-red-600'} />
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{amb.vehicleNumber}</div>
-                            <div className="text-xs text-gray-500">ID: {amb.id}</div>
+                            <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {amb.vehicleNumber}
+                            </div>
+                            <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
+                              ID: {amb.id}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{amb.driverName}</div>
-                        <div className="text-xs text-gray-500 flex items-center">
+                        <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                          {amb.driverName}
+                        </div>
+                        <div className={`flex items-center ${
+                          darkMode ? 'text-gray-400' : 'text-gray-500'
+                        }`}>
                           <FaPhone className="mr-1 text-xs" /> {amb.driverContact}
                         </div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`px-4 py-3 whitespace-nowrap ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         {amb.vehicleType}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`px-4 py-3 whitespace-nowrap ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         <div className="flex items-center">
-                          <FaMapMarkerAlt className="mr-1 text-xs text-gray-500" />
+                          <FaMapMarkerAlt className={`mr-1 text-xs ${
+                            darkMode ? 'text-gray-400' : 'text-gray-500'
+                          }`} />
                           {amb.currentLocation}
                         </div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`px-4 py-3 whitespace-nowrap ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         {amb.baseStation}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
@@ -428,7 +488,9 @@ const AmbulanceManagement = () => {
                             onClick={() => viewAmbulanceDetails(amb)}
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800"
+                            className={`h-7 w-7 p-0 ${
+                              darkMode ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700' : 'text-blue-600 hover:text-blue-800'
+                            }`}
                             title="View"
                           >
                             <FaEye className="text-sm" />
@@ -437,7 +499,9 @@ const AmbulanceManagement = () => {
                             onClick={() => handleEditAmbulance(amb)}
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-green-600 hover:text-green-800"
+                            className={`h-7 w-7 p-0 ${
+                              darkMode ? 'text-green-400 hover:text-green-300 hover:bg-gray-700' : 'text-green-600 hover:text-green-800'
+                            }`}
                             title="Edit"
                           >
                             <FaEdit className="text-sm" />
@@ -446,7 +510,9 @@ const AmbulanceManagement = () => {
                             onClick={() => handleDeleteAmbulance(amb.id)}
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-red-600 hover:text-red-800"
+                            className={`h-7 w-7 p-0 ${
+                              darkMode ? 'text-red-400 hover:text-red-300 hover:bg-gray-700' : 'text-red-600 hover:text-red-800'
+                            }`}
                             title="Delete"
                           >
                             <FaTrash className="text-sm" />
@@ -457,8 +523,10 @@ const AmbulanceManagement = () => {
                   ))}
                   {visibleAmbulances.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
-                        No ambulances found matching your criteria.
+                      <td colSpan={7} className="px-4 py-6 text-center">
+                        <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
+                          No ambulances found matching your criteria.
+                        </p>
                       </td>
                     </tr>
                   )}
@@ -469,7 +537,9 @@ const AmbulanceManagement = () => {
         </div>
 
         {/* Summary */}
-        <div className="mt-4 text-center text-sm text-gray-600">
+        <div className={`mt-4 text-center text-sm ${
+          darkMode ? 'text-gray-400' : 'text-gray-600'
+        }`}>
           Showing {visibleAmbulances.length} of {ambulances.length} ambulances
         </div>
       </div>
@@ -477,13 +547,17 @@ const AmbulanceManagement = () => {
       {/* Ambulance Details Modal */}
       {showAmbulanceDetails && selectedAmbulance && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto ${
+            darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
+          }`}>
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Ambulance Details</h2>
+                <h2 className={`text-xl font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>Ambulance Details</h2>
                 <button
                   onClick={() => setShowAmbulanceDetails(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
                 >
                   <FaTimes />
                 </button>
@@ -491,74 +565,96 @@ const AmbulanceManagement = () => {
               
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 bg-red-100 rounded-lg flex items-center justify-center">
-                    <FaAmbulance className="text-red-600 text-2xl" />
+                  <div className={`h-16 w-16 rounded-lg flex items-center justify-center ${
+                    darkMode ? 'bg-red-900' : 'bg-red-100'
+                  }`}>
+                    <FaAmbulance className={darkMode ? 'text-red-300 text-2xl' : 'text-red-600 text-2xl'} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium">{selectedAmbulance.vehicleNumber}</h3>
-                    <p className="text-sm text-gray-500">ID: {selectedAmbulance.id}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500">Driver Name</p>
-                    <p className="text-sm font-medium">{selectedAmbulance.driverName}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Driver Contact</p>
-                    <p className="text-sm font-medium flex items-center">
-                      <FaPhone className="mr-1 text-xs" /> {selectedAmbulance.driverContact}
+                    <h3 className={`text-lg font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{selectedAmbulance.vehicleNumber}</h3>
+                    <p className={darkMode ? 'text-gray-400 text-sm' : 'text-gray-500 text-sm'}>
+                      ID: {selectedAmbulance.id}
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-500">Vehicle Type</p>
-                    <p className="text-sm font-medium">{selectedAmbulance.vehicleType}</p>
+                    <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Driver Name</p>
+                    <p className={darkMode ? 'text-white text-sm font-medium' : 'text-gray-900 text-sm font-medium'}>
+                      {selectedAmbulance.driverName}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Base Station</p>
-                    <p className="text-sm font-medium">{selectedAmbulance.baseStation}</p>
+                    <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Driver Contact</p>
+                    <p className={`text-sm font-medium flex items-center ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      <FaPhone className={`mr-1 text-xs ${
+                        darkMode ? 'text-gray-400' : 'text-gray-500'
+                      }`} /> {selectedAmbulance.driverContact}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Vehicle Type</p>
+                    <p className={darkMode ? 'text-white text-sm font-medium' : 'text-gray-900 text-sm font-medium'}>
+                      {selectedAmbulance.vehicleType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Base Station</p>
+                    <p className={darkMode ? 'text-white text-sm font-medium' : 'text-gray-900 text-sm font-medium'}>
+                      {selectedAmbulance.baseStation}
+                    </p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Current Location</p>
-                  <p className="text-sm font-medium flex items-center">
-                    <FaMapMarkerAlt className="mr-1 text-xs text-gray-500" />
+                  <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Current Location</p>
+                  <p className={`text-sm font-medium flex items-center ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    <FaMapMarkerAlt className={`mr-1 text-xs ${
+                      darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`} />
                     {selectedAmbulance.currentLocation}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-500">Last Maintenance</p>
-                    <p className="text-sm font-medium">
+                    <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Last Maintenance</p>
+                    <p className={darkMode ? 'text-white text-sm font-medium' : 'text-gray-900 text-sm font-medium'}>
                       {new Date(selectedAmbulance.lastMaintenanceDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Next Maintenance</p>
-                    <p className="text-sm font-medium">
+                    <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Next Maintenance</p>
+                    <p className={darkMode ? 'text-white text-sm font-medium' : 'text-gray-900 text-sm font-medium'}>
                       {new Date(selectedAmbulance.nextMaintenanceDate).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Insurance Expiry</p>
-                  <p className="text-sm font-medium">
+                  <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Insurance Expiry</p>
+                  <p className={darkMode ? 'text-white text-sm font-medium' : 'text-gray-900 text-sm font-medium'}>
                     {new Date(selectedAmbulance.insuranceExpiry).toLocaleDateString()}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Equipment</p>
+                  <p className={darkMode ? 'text-gray-400 text-xs' : 'text-gray-500 text-xs'}>Equipment</p>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {selectedAmbulance.equipment.map((item, index) => (
-                      <span key={index} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                      <span key={index} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                        darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'
+                      }`}>
                         {item}
                       </span>
                     ))}
@@ -566,7 +662,9 @@ const AmbulanceManagement = () => {
                 </div>
 
                 <div className="pt-4">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Update Status</h3>
+                  <h3 className={`text-sm font-medium mb-2 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Update Status</h3>
                   <div className="flex flex-wrap gap-2">
                     <Button
                       onClick={() => updateStatus(selectedAmbulance.id, 'available')}
@@ -617,13 +715,17 @@ const AmbulanceManagement = () => {
       {/* Add Ambulance Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className={`rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto ${
+            darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
+          }`}>
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Add New Ambulance</h2>
+                <h2 className={`text-xl font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>Add New Ambulance</h2>
                 <button
                   onClick={() => setShowAddForm(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
                 >
                   <FaTimes />
                 </button>
@@ -631,7 +733,9 @@ const AmbulanceManagement = () => {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     Vehicle Number *
                   </label>
                   <Input
@@ -639,14 +743,16 @@ const AmbulanceManagement = () => {
                     value={formData.vehicleNumber}
                     onChange={handleFormChange}
                     required
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className={getInputClasses()}
                     placeholder="MH02AB1234"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       Driver Name *
                     </label>
                     <Input
@@ -654,12 +760,14 @@ const AmbulanceManagement = () => {
                       value={formData.driverName}
                       onChange={handleFormChange}
                       required
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className={getInputClasses()}
                       placeholder="Rajesh Kumar"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       Driver Contact *
                     </label>
                     <Input
@@ -667,21 +775,23 @@ const AmbulanceManagement = () => {
                       value={formData.driverContact}
                       onChange={handleFormChange}
                       required
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className={getInputClasses()}
                       placeholder="+919876543210"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     Vehicle Type *
                   </label>
                   <select
                     name="vehicleType"
                     value={formData.vehicleType}
                     onChange={handleFormChange}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                    className={`w-full rounded-md px-3 py-2 text-sm focus:outline-none ${getSelectClasses()}`}
                   >
                     <option value="Basic">Basic</option>
                     <option value="Advanced">Advanced</option>
@@ -691,19 +801,23 @@ const AmbulanceManagement = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       Current Location
                     </label>
                     <Input
                       name="currentLocation"
                       value={formData.currentLocation}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className={getInputClasses()}
                       placeholder="Main Hospital"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       Base Station *
                     </label>
                     <Input
@@ -711,7 +825,7 @@ const AmbulanceManagement = () => {
                       value={formData.baseStation}
                       onChange={handleFormChange}
                       required
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className={getInputClasses()}
                       placeholder="Central Station"
                     />
                   </div>
@@ -719,7 +833,9 @@ const AmbulanceManagement = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       Last Maintenance Date
                     </label>
                     <Input
@@ -727,11 +843,13 @@ const AmbulanceManagement = () => {
                       type="date"
                       value={formData.lastMaintenanceDate}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className={getInputClasses()}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className={`block text-sm font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       Next Maintenance Date
                     </label>
                     <Input
@@ -739,13 +857,15 @@ const AmbulanceManagement = () => {
                       type="date"
                       value={formData.nextMaintenanceDate}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      className={getInputClasses()}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     Insurance Expiry Date
                   </label>
                   <Input
@@ -753,19 +873,21 @@ const AmbulanceManagement = () => {
                     type="date"
                     value={formData.insuranceExpiry}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className={getInputClasses()}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     Equipment (comma separated)
                   </label>
                   <Input
                     name="equipment"
                     value={formData.equipment}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className={getInputClasses()}
                     placeholder="Oxygen, Defibrillator, Stretcher"
                   />
                 </div>

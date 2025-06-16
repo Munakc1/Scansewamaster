@@ -8,6 +8,7 @@ import { MdDownload, MdFilterList, MdOutlineAttachMoney, MdMedicalServices, MdLo
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, PieChart, Pie, Cell } from 'recharts';
+import { useTheme } from '../../components/ThemeContext';
 
 interface RevenueData {
   date: string;
@@ -35,6 +36,7 @@ interface RevenueSummary {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 const RevenueTracker = () => {
+  const { darkMode } = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
@@ -122,20 +124,20 @@ const RevenueTracker = () => {
 
   if (loading) {
     return (
-      <div className="h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className={`h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${darkMode ? 'border-blue-500' : 'border-blue-600'}`}></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600 text-center p-4 max-w-md">
-          <p className="text-lg font-medium">{error}</p>
+      <div className={`h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`text-center p-4 max-w-md ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className="text-lg font-medium text-red-500">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className={`mt-4 px-4 py-2 rounded ${darkMode ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
           >
             Retry
           </button>
@@ -146,8 +148,8 @@ const RevenueTracker = () => {
 
   if (!revenueData) {
     return (
-      <div className="h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600 text-center p-4 max-w-md">
+      <div className={`h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`text-center p-4 max-w-md ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <p className="text-lg font-medium">No revenue data available</p>
         </div>
       </div>
@@ -155,13 +157,13 @@ const RevenueTracker = () => {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       <div className="max-w-7xl mx-auto p-4 sm:p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Revenue Tracker</h1>
-            <p className="text-gray-600 text-sm sm:text-base mt-1">Track and analyze revenue across all services</p>
+            <h1 className={`text-2xl sm:text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Revenue Tracker</h1>
+            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-sm sm:text-base mt-1`}>Track and analyze revenue across all services</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <div className="relative">
@@ -172,16 +174,20 @@ const RevenueTracker = () => {
                 onChange={(update) => setDateRange(update)}
                 isClearable={true}
                 placeholderText="Select date range"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none pl-10"
+                className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none pl-10 ${
+                  darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                }`}
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaRegCalendarAlt className="text-gray-400" />
+                <FaRegCalendarAlt className={darkMode ? 'text-gray-400' : 'text-gray-400'} />
               </div>
             </div>
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value as 'daily' | 'weekly' | 'monthly')}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className={`border rounded-md px-3 py-2 text-sm focus:outline-none ${
+                darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+              }`}
             >
               <option value="daily">Daily</option>
               <option value="weekly">Weekly</option>
@@ -189,15 +195,15 @@ const RevenueTracker = () => {
             </select>
             <Button
               onClick={() => handleExport('csv')}
-              variant="outline"
-              className="border-gray-300"
+              variant={darkMode ? "secondary" : "outline"}
+              className={darkMode ? "bg-gray-800 hover:bg-gray-700" : "border-gray-300"}
             >
               <MdDownload className="mr-1" /> Export CSV
             </Button>
             <Button
               onClick={() => handleExport('json')}
-              variant="outline"
-              className="border-gray-300"
+              variant={darkMode ? "secondary" : "outline"}
+              className={darkMode ? "bg-gray-800 hover:bg-gray-700" : "border-gray-300"}
             >
               <MdDownload className="mr-1" /> Export JSON
             </Button>
@@ -206,54 +212,54 @@ const RevenueTracker = () => {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-1">
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Total Revenue</p>
+                <p className={`text-xl sm:text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{revenueData.totalRevenue.toLocaleString('en-IN')}
                 </p>
               </div>
-              <div className="p-2 sm:p-3 rounded-full bg-blue-100 text-blue-600">
+              <div className={`p-2 sm:p-3 rounded-full ${darkMode ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                 <MdOutlineAttachMoney className="text-lg sm:text-xl" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Transactions</p>
-                <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-1">
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Total Transactions</p>
+                <p className={`text-xl sm:text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   {revenueData.totalTransactions.toLocaleString('en-IN')}
                 </p>
               </div>
-              <div className="p-2 sm:p-3 rounded-full bg-green-100 text-green-600">
+              <div className={`p-2 sm:p-3 rounded-full ${darkMode ? 'bg-green-900 text-green-400' : 'bg-green-100 text-green-600'}`}>
                 <FaFileInvoiceDollar className="text-lg sm:text-xl" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Avg. Transaction</p>
-                <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-1">
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Avg. Transaction</p>
+                <p className={`text-xl sm:text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{revenueData.averageTransaction.toFixed(2)}
                 </p>
               </div>
-              <div className="p-2 sm:p-3 rounded-full bg-purple-100 text-purple-600">
+              <div className={`p-2 sm:p-3 rounded-full ${darkMode ? 'bg-purple-900 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                 <FaFilter className="text-lg sm:text-xl" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Time Period</p>
-                <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-1 capitalize">
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Time Period</p>
+                <p className={`text-xl sm:text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'} capitalize`}>
                   {timeRange}
                 </p>
               </div>
-              <div className="p-2 sm:p-3 rounded-full bg-yellow-100 text-yellow-600">
+              <div className={`p-2 sm:p-3 rounded-full ${darkMode ? 'bg-yellow-900 text-yellow-400' : 'bg-yellow-100 text-yellow-600'}`}>
                 <FaRegCalendarAlt className="text-lg sm:text-xl" />
               </div>
             </div>
@@ -263,8 +269,8 @@ const RevenueTracker = () => {
         {/* Revenue Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           {/* Revenue by Category - Pie Chart */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Revenue by Category</h2>
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            <h2 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Revenue by Category</h2>
             <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -284,16 +290,28 @@ const RevenueTracker = () => {
                   </Pie>
                   <Tooltip 
                     formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                    contentStyle={{ 
+                      backgroundColor: darkMode ? '#374151' : '#FFFFFF',
+                      borderColor: darkMode ? '#4B5563' : '#E5E7EB',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      color: darkMode ? '#F3F4F6' : '#1F2937',
+                    }}
                   />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{ 
+                      color: darkMode ? '#F3F4F6' : '#1F2937',
+                      paddingTop: '20px'
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Revenue by Service - Bar Chart */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 col-span-2">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Revenue by Service</h2>
+          <div className={`rounded-lg shadow-sm border p-4 col-span-2 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            <h2 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Revenue by Service</h2>
             <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -305,13 +323,32 @@ const RevenueTracker = () => {
                     bottom: 5,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#4B5563' : '#E5E7EB'} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                    tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                  />
+                  <YAxis 
+                    stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                    tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                  />
                   <Tooltip 
                     formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                    contentStyle={{ 
+                      backgroundColor: darkMode ? '#374151' : '#FFFFFF',
+                      borderColor: darkMode ? '#4B5563' : '#E5E7EB',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      color: darkMode ? '#F3F4F6' : '#1F2937',
+                    }}
                   />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{ 
+                      color: darkMode ? '#F3F4F6' : '#1F2937',
+                      paddingTop: '20px'
+                    }}
+                  />
                   <Bar dataKey="value" name="Revenue" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer>
@@ -320,8 +357,8 @@ const RevenueTracker = () => {
         </div>
 
         {/* Revenue Trend */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Revenue Trend</h2>
+        <div className={`rounded-lg shadow-sm border p-4 mb-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <h2 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Revenue Trend</h2>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
@@ -333,13 +370,32 @@ const RevenueTracker = () => {
                   bottom: 5,
                 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#4B5563' : '#E5E7EB'} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                  tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                />
+                <YAxis 
+                  stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                  tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                />
                 <Tooltip 
                   formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                  contentStyle={{ 
+                    backgroundColor: darkMode ? '#374151' : '#FFFFFF',
+                    borderColor: darkMode ? '#4B5563' : '#E5E7EB',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    color: darkMode ? '#F3F4F6' : '#1F2937',
+                  }}
                 />
-                <Legend />
+                <Legend 
+                  wrapperStyle={{ 
+                    color: darkMode ? '#F3F4F6' : '#1F2937',
+                    paddingTop: '20px'
+                  }}
+                />
                 <Line type="monotone" dataKey="totalRevenue" stroke="#3B82F6" strokeWidth={2} name="Total Revenue" />
                 <Line type="monotone" dataKey="doctorRevenue" stroke="#10B981" strokeWidth={2} name="Doctor Revenue" />
                 <Line type="monotone" dataKey="patientRevenue" stroke="#F59E0B" strokeWidth={2} name="Patient Revenue" />
@@ -353,29 +409,29 @@ const RevenueTracker = () => {
         {/* Service Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           {/* Doctors */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Doctors</h3>
-              <div className="p-2 rounded-full bg-blue-100 text-blue-600">
+              <h3 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Doctors</h3>
+              <div className={`p-2 rounded-full ${darkMode ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                 <FaUserMd className="text-base sm:text-lg" />
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Revenue:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Revenue:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{revenueData.revenueByCategory.find(c => c.name === 'Doctors')?.value.toLocaleString('en-IN') || '0'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Share:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Share:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   {((revenueData.revenueByCategory.find(c => c.name === 'Doctors')?.value || 0) / revenueData.totalRevenue * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Avg. Transaction:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Avg. Transaction:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{(((revenueData.revenueByCategory.find(c => c.name === 'Doctors')?.value || 0) / 420) || 0).toFixed(2)}
                 </span>
               </div>
@@ -383,29 +439,29 @@ const RevenueTracker = () => {
           </div>
 
           {/* Patients */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Patients</h3>
-              <div className="p-2 rounded-full bg-green-100 text-green-600">
+              <h3 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Patients</h3>
+              <div className={`p-2 rounded-full ${darkMode ? 'bg-green-900 text-green-400' : 'bg-green-100 text-green-600'}`}>
                 <FaUserInjured className="text-base sm:text-lg" />
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Revenue:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Revenue:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{revenueData.revenueByCategory.find(c => c.name === 'Patients')?.value.toLocaleString('en-IN') || '0'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Share:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Share:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   {((revenueData.revenueByCategory.find(c => c.name === 'Patients')?.value || 0) / revenueData.totalRevenue * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Avg. Transaction:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Avg. Transaction:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{(((revenueData.revenueByCategory.find(c => c.name === 'Patients')?.value || 0) / 380) || 0).toFixed(2)}
                 </span>
               </div>
@@ -413,29 +469,29 @@ const RevenueTracker = () => {
           </div>
 
           {/* Nurses */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Nurses</h3>
-              <div className="p-2 rounded-full bg-yellow-100 text-yellow-600">
+              <h3 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Nurses</h3>
+              <div className={`p-2 rounded-full ${darkMode ? 'bg-yellow-900 text-yellow-400' : 'bg-yellow-100 text-yellow-600'}`}>
                 <FaUserNurse className="text-base sm:text-lg" />
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Revenue:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Revenue:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{revenueData.revenueByCategory.find(c => c.name === 'Nurses')?.value.toLocaleString('en-IN') || '0'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Share:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Share:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   {((revenueData.revenueByCategory.find(c => c.name === 'Nurses')?.value || 0) / revenueData.totalRevenue * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Avg. Transaction:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Avg. Transaction:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{(((revenueData.revenueByCategory.find(c => c.name === 'Nurses')?.value || 0) / 250) || 0).toFixed(2)}
                 </span>
               </div>
@@ -443,29 +499,29 @@ const RevenueTracker = () => {
           </div>
 
           {/* Pharmacy */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className={`rounded-lg shadow-sm border p-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Pharmacy</h3>
-              <div className="p-2 rounded-full bg-purple-100 text-purple-600">
+              <h3 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Pharmacy</h3>
+              <div className={`p-2 rounded-full ${darkMode ? 'bg-purple-900 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                 <MdLocalPharmacy className="text-base sm:text-lg" />
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Revenue:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Revenue:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{revenueData.revenueByCategory.find(c => c.name === 'Pharmacy')?.value.toLocaleString('en-IN') || '0'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Share:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Share:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   {((revenueData.revenueByCategory.find(c => c.name === 'Pharmacy')?.value || 0) / revenueData.totalRevenue * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">Avg. Transaction:</span>
-                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Avg. Transaction:</span>
+                <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{(((revenueData.revenueByCategory.find(c => c.name === 'Pharmacy')?.value || 0) / 190) || 0).toFixed(2)}
                 </span>
               </div>
@@ -474,83 +530,91 @@ const RevenueTracker = () => {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-3 sm:p-4 border-b border-gray-200 flex justify-between items-center">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recent Transactions</h2>
-            <button className="text-xs sm:text-sm text-blue-600 hover:text-blue-800">View All</button>
+        <div className={`rounded-lg shadow-sm border overflow-hidden ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className={`p-3 sm:p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex justify-between items-center`}>
+            <h2 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Recent Transactions</h2>
+            <button className={`text-xs sm:text-sm ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>View All</button>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className={`px-4 py-2 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Date</th>
+                  <th className={`px-4 py-2 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Service</th>
+                  <th className={`px-4 py-2 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Transaction ID</th>
+                  <th className={`px-4 py-2 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Amount</th>
+                  <th className={`px-4 py-2 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Status</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr className="hover:bg-gray-50">
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">Today, 10:30 AM</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+              <tbody className={`divide-y ${darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
+                <tr className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>Today, 10:30 AM</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                     <div className="flex items-center">
                       <FaUserMd className="text-blue-500 mr-2" />
                       Doctor Consultation
                     </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-blue-600">TXN-DOC-789</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">₹1,500.00</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>TXN-DOC-789</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>₹1,500.00</td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800'
+                    }`}>
                       Completed
                     </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">Today, 9:15 AM</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                <tr className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>Today, 9:15 AM</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                     <div className="flex items-center">
                       <FaUserNurse className="text-yellow-500 mr-2" />
                       Nurse Service
                     </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-blue-600">TXN-NUR-456</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">₹2,500.00</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>TXN-NUR-456</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>₹2,500.00</td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800'
+                    }`}>
                       Completed
                     </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">Yesterday, 2:45 PM</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                <tr className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>Yesterday, 2:45 PM</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                     <div className="flex items-center">
                       <MdLocalPharmacy className="text-purple-500 mr-2" />
                       Pharmacy Order
                     </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-blue-600">TXN-PHR-123</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">₹1,800.00</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>TXN-PHR-123</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>₹1,800.00</td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      darkMode ? 'bg-yellow-900 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
                       Pending
                     </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">Yesterday, 11:20 AM</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                <tr className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>Yesterday, 11:20 AM</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                     <div className="flex items-center">
                       <FaUserInjured className="text-green-500 mr-2" />
                       Patient Payment
                     </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-blue-600">TXN-PAT-987</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900">₹3,200.00</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>TXN-PAT-987</td>
+                  <td className={`px-4 py-3 whitespace-nowrap text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>₹3,200.00</td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800'
+                    }`}>
                       Completed
                     </span>
                   </td>

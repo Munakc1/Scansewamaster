@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FaUserNurse, FaEdit, FaTrash, FaTimes, FaStar, FaEye } from 'react-icons/fa';
 import { MdAdd, MdFileUpload, MdDownload, MdFilterList, MdLocationOn } from 'react-icons/md';
+import { useTheme } from '../components/ThemeContext';
 
 interface NurseApiResponse {
   _id?: string;
@@ -133,6 +134,7 @@ const dummyNurses: NurseApiResponse[] = [
 ];
 
 const NurseDetails = () => {
+  const { darkMode } = useTheme();
   const [nurses, setNurses] = useState<NurseCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -375,7 +377,7 @@ const NurseDetails = () => {
           <FaStar
             key={star}
             className={`w-2 h-2 ${
-              star <= rating ? 'text-yellow-400' : 'text-gray-300'
+              star <= rating ? 'text-yellow-400' : darkMode ? 'text-gray-500' : 'text-gray-300'
             }`}
           />
         ))}
@@ -384,13 +386,13 @@ const NurseDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="w-full px-2 sm:px-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+        <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Nurse Management</h1>
-            <p className="text-xs sm:text-sm text-gray-600 mt-1">Manage registered nurses</p>
+            <h1 className={`text-xl sm:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Nurse Management</h1>
+            <p className={`text-xs sm:text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Manage registered nurses</p>
           </div>
           <div className="flex flex-wrap gap-1">
             <Button 
@@ -404,7 +406,7 @@ const NurseDetails = () => {
             <Button 
               onClick={handleImport}
               variant="outline"
-              className="border-gray-300 text-xs sm:text-sm p-1 sm:p-2"
+              className={`text-xs sm:text-sm p-1 sm:p-2 ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-300'}`}
               size="sm"
             >
               <MdFileUpload className="mr-0 sm:mr-1" />
@@ -413,7 +415,7 @@ const NurseDetails = () => {
             <Button 
               onClick={() => handleExport('csv')}
               variant="outline"
-              className="border-gray-300 text-xs sm:text-sm p-1 sm:p-2"
+              className={`text-xs sm:text-sm p-1 sm:p-2 ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-300'}`}
               size="sm"
             >
               <MdDownload className="mr-0 sm:mr-1" />
@@ -422,7 +424,7 @@ const NurseDetails = () => {
             <Button 
               onClick={() => handleExport('json')}
               variant="outline"
-              className="border-gray-300 text-xs sm:text-sm p-1 sm:p-2"
+              className={`text-xs sm:text-sm p-1 sm:p-2 ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-300'}`}
               size="sm"
             >
               <MdDownload className="mr-0 sm:mr-1" />
@@ -432,21 +434,23 @@ const NurseDetails = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-4">
+        <div className={`rounded-lg shadow-sm border p-3 mb-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex-1">
               <Input
                 placeholder="Search nurses..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs sm:text-sm h-8"
+                className={`text-xs sm:text-sm h-8 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
               />
             </div>
             <div className="sm:w-48">
               <select
                 value={specialtyFilter}
                 onChange={(e) => setSpecialtyFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-2 py-1 text-xs sm:text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-8"
+                className={`w-full border rounded-md px-2 py-1 text-xs sm:text-sm focus:outline-none h-8 ${
+                  darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-300'
+                }`}
               >
                 <option value="all">All Specialties</option>
                 {allSpecialties.map((spec) => (
@@ -458,96 +462,146 @@ const NurseDetails = () => {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className={`rounded-lg shadow-sm border overflow-hidden ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        }`}>
           {loading ? (
-            <div className="p-4 text-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-1 text-xs text-gray-600">Loading nurses...</p>
+            <div className={`p-4 text-center ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className={`animate-spin rounded-full h-6 w-6 border-b-2 mx-auto ${
+                darkMode ? 'border-blue-500' : 'border-blue-600'
+              }`}></div>
+              <p className={`mt-1 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading nurses...</p>
             </div>
           ) : error ? (
-            <div className="p-4 text-center">
+            <div className={`p-4 text-center ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <p className="text-xs text-red-600">{error}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y text-xs sm:text-sm">
+                <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Nurse</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Specialty</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Exp.</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Rate</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Rating</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden sm:table-cell">Languages</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden sm:table-cell">Location</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden sm:table-cell">Duration</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
-                    <th className="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Nurse</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Specialty</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Exp.</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Rate</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Rating</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap hidden sm:table-cell ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Languages</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap hidden sm:table-cell ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Location</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap hidden sm:table-cell ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Duration</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Status</th>
+                    <th className={`px-2 py-2 text-left font-medium uppercase tracking-wider whitespace-nowrap ${
+                      darkMode ? 'text-gray-300' : 'text-gray-500'
+                    }`}>Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${
+                  darkMode ? 'bg-gray-800 divide-gray-700' : 'bg-white divide-gray-200'
+                }`}>
                   {visibleNurses.map((nurse) => (
-                    <tr key={nurse.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={nurse.id} className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
                       <td className="px-2 py-2 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-8 w-8">
-                            <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                              <FaUserNurse className="text-green-600 text-sm" />
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                              darkMode ? 'bg-gray-600' : 'bg-green-100'
+                            }`}>
+                              <FaUserNurse className={`text-sm ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
                             </div>
                           </div>
                           <div className="ml-1">
-                            <div className="font-medium text-gray-900 whitespace-nowrap truncate max-w-[100px]">{nurse.fullName}</div>
-                            <div className="text-gray-500">{nurse.experience}y</div>
+                            <div className={`font-medium whitespace-nowrap truncate max-w-[100px] ${
+                              darkMode ? 'text-white' : 'text-gray-900'
+                            }`}>{nurse.fullName}</div>
+                            <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{nurse.experience}y</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-2 py-2 whitespace-nowrap">
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 truncate max-w-[80px]">
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium truncate max-w-[80px] ${
+                          darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
+                        }`}>
                           {nurse.specialty}
                         </span>
                       </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-gray-900">
+                      <td className={`px-2 py-2 whitespace-nowrap ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         {nurse.experience}y
                       </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-gray-900">
+                      <td className={`px-2 py-2 whitespace-nowrap ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         ₹{nurse.ratePerHour}
                       </td>
                       <td className="px-2 py-2 whitespace-nowrap">
                         {nurse.rating > 0 ? renderStars(nurse.rating) : '—'}
                       </td>
-                      <td className="px-2 py-2 hidden sm:table-cell">
+                      <td className={`px-2 py-2 hidden sm:table-cell ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         <div className="flex flex-wrap gap-0.5">
                           {nurse.languagesSpoken.length > 0 ? nurse.languagesSpoken.slice(0, 2).map((lang, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800"
+                              className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium ${
+                                darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800'
+                              }`}
                             >
                               {lang}
                             </span>
                           )) : '—'}
                           {nurse.languagesSpoken.length > 2 && (
-                            <span className="text-[10px] text-gray-500">+{nurse.languagesSpoken.length - 2}</span>
+                            <span className={`text-[10px] ${
+                              darkMode ? 'text-gray-400' : 'text-gray-500'
+                            }`}>+{nurse.languagesSpoken.length - 2}</span>
                           )}
                         </div>
                       </td>
-                      <td className="px-2 py-2 hidden sm:table-cell">
+                      <td className={`px-2 py-2 hidden sm:table-cell ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         <div className="flex items-center">
-                          <MdLocationOn className="text-gray-400 mr-0.5 text-xs" />
+                          <MdLocationOn className={`mr-0.5 text-xs ${
+                            darkMode ? 'text-gray-400' : 'text-gray-500'
+                          }`} />
                           <span className="truncate max-w-[80px]">{nurse.location.split(',')[0]}</span>
                         </div>
                       </td>
-                      <td className="px-2 py-2 hidden sm:table-cell">
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-800 capitalize">
+                      <td className={`px-2 py-2 hidden sm:table-cell ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium capitalize ${
+                          darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'
+                        }`}>
                           {nurse.duration.charAt(0)}
                         </span>
                       </td>
                       <td className="px-2 py-2 whitespace-nowrap">
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium capitalize ${
                           nurse.status === 'confirmed'
-                            ? 'bg-green-100 text-green-800' 
+                            ? darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                             : nurse.status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
+                            ? darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800'
+                            : darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                         }`}>
                           {nurse.status.charAt(0)}
                         </span>
@@ -556,21 +610,27 @@ const NurseDetails = () => {
                         <div className="flex gap-1">
                           <button 
                             onClick={() => handleViewNurse(nurse)}
-                            className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50 transition-colors"
+                            className={`p-1 rounded transition-colors ${
+                              darkMode ? 'text-green-400 hover:bg-gray-700' : 'text-green-600 hover:bg-green-50'
+                            }`}
                             title="View"
                           >
                             <FaEye className="text-xs" />
                           </button>
                           <button 
                             onClick={() => handleEditClick(nurse)}
-                            className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors"
+                            className={`p-1 rounded transition-colors ${
+                              darkMode ? 'text-blue-400 hover:bg-gray-700' : 'text-blue-600 hover:bg-blue-50'
+                            }`}
                             title="Edit"
                           >
                             <FaEdit className="text-xs" />
                           </button>
                           <button 
                             onClick={() => handleDeleteNurse(nurse.id)}
-                            className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                            className={`p-1 rounded transition-colors ${
+                              darkMode ? 'text-red-400 hover:bg-gray-700' : 'text-red-600 hover:bg-red-50'
+                            }`}
                             title="Delete"
                           >
                             <FaTrash className="text-xs" />
@@ -581,7 +641,9 @@ const NurseDetails = () => {
                   ))}
                   {visibleNurses.length === 0 && (
                     <tr>
-                      <td colSpan={10} className="px-4 py-6 text-center text-gray-500 text-xs sm:text-sm">
+                      <td colSpan={10} className={`px-4 py-6 text-center text-xs sm:text-sm ${
+                        darkMode ? 'text-gray-400' : 'text-gray-500'
+                      }`}>
                         No nurses found matching your criteria.
                       </td>
                     </tr>
@@ -593,7 +655,9 @@ const NurseDetails = () => {
         </div>
 
         {/* Summary */}
-        <div className="mt-4 text-center text-xs text-gray-600">
+        <div className={`mt-4 text-center text-xs ${
+          darkMode ? 'text-gray-400' : 'text-gray-600'
+        }`}>
           Showing {visibleNurses.length} of {nurses.length} nurses
         </div>
       </div>
@@ -601,13 +665,17 @@ const NurseDetails = () => {
       {/* Add Nurse Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-2 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-full w-full max-h-[95vh] overflow-y-auto mx-2">
+          <div className={`rounded-lg shadow-xl max-w-full w-full max-h-[95vh] overflow-y-auto mx-2 ${
+            darkMode ? 'bg-gray-800' : 'bg-white'
+          }`}>
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Add Nurse</h2>
+                <h2 className={`text-lg font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>Add Nurse</h2>
                 <button
                   onClick={() => setShowAddForm(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}
                 >
                   <FaTimes className="text-sm" />
                 </button>
@@ -615,53 +683,71 @@ const NurseDetails = () => {
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Full Name *</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Full Name *</label>
                   <Input
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleFormChange}
                     required
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Experience</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>Experience</label>
                     <Input
                       name="experience"
                       type="number"
                       min="0"
                       value={formData.experience}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Rate/Hour</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>Rate/Hour</label>
                     <Input
                       name="ratePerHour"
                       type="number"
                       min="0"
                       value={formData.ratePerHour}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Specialty</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Specialty</label>
                   <Input
                     name="specialty"
                     value={formData.specialty}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Rating (0-5)</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Rating (0-5)</label>
                   <Input
                     name="rating"
                     type="number"
@@ -670,68 +756,94 @@ const NurseDetails = () => {
                     step="0.1"
                     value={formData.rating}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Languages Spoken</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Languages Spoken</label>
                   <Input
                     name="languagesSpoken"
                     value={formData.languagesSpoken}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">City</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>City</label>
                     <Input
                       name="city"
                       value={formData.city}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Pin Code</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>Pin Code</label>
                     <Input
                       name="pinCode"
                       value={formData.pinCode}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Availability Days</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Availability Days</label>
                   <Input
                     name="availabilityDays"
                     value={formData.availabilityDays}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Availability Time</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Availability Time</label>
                   <Input
                     name="availabilityTime"
                     value={formData.availabilityTime}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Duration</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Duration</label>
                   <select
                     name="duration"
                     value={formData.duration}
                     onChange={handleFormChange}
-                    className="w-full border border-gray-300 rounded-md px-2 py-1 text-xs focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-8"
+                    className={`w-full border rounded-md px-2 py-1 text-xs focus:outline-none h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   >
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -740,12 +852,16 @@ const NurseDetails = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Status</label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleFormChange}
-                    className="w-full border border-gray-300 rounded-md px-2 py-1 text-xs focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-8"
+                    className={`w-full border rounded-md px-2 py-1 text-xs focus:outline-none h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   >
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
@@ -758,7 +874,9 @@ const NurseDetails = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowAddForm(false)}
-                    className="flex-1 text-xs h-8"
+                    className={`flex-1 text-xs h-8 ${
+                      darkMode ? 'border-gray-600 hover:bg-gray-700' : ''
+                    }`}
                   >
                     Cancel
                   </Button>
@@ -778,13 +896,17 @@ const NurseDetails = () => {
       {/* View Nurse Modal */}
       {showViewModal && currentNurse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-2 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-full w-full max-h-[95vh] overflow-y-auto mx-2">
+          <div className={`rounded-lg shadow-xl max-w-full w-full max-h-[95vh] overflow-y-auto mx-2 ${
+            darkMode ? 'bg-gray-800' : 'bg-white'
+          }`}>
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Nurse Details</h2>
+                <h2 className={`text-lg font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>Nurse Details</h2>
                 <button
                   onClick={() => setShowViewModal(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}
                 >
                   <FaTimes className="text-sm" />
                 </button>
@@ -793,27 +915,45 @@ const NurseDetails = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="flex-shrink-0 h-12 w-12">
-                    <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-                      <FaUserNurse className="text-green-600 text-lg" />
+                    <div className={`h-12 w-12 rounded-full flex items-center justify-center ${
+                      darkMode ? 'bg-gray-700' : 'bg-green-100'
+                    }`}>
+                      <FaUserNurse className={`text-lg ${
+                        darkMode ? 'text-green-400' : 'text-green-600'
+                      }`} />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900">{currentNurse.fullName}</h3>
-                    <p className="text-xs text-gray-500">{currentNurse.experience}y exp.</p>
+                    <h3 className={`text-sm font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.fullName}</h3>
+                    <p className={`text-xs ${
+                      darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>{currentNurse.experience}y exp.</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-xs text-gray-500">Specialty</p>
-                    <p className="text-xs font-medium text-gray-900">{currentNurse.specialty}</p>
+                    <p className={`text-xs ${
+                      darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Specialty</p>
+                    <p className={`text-xs font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.specialty}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Rate/Hour</p>
-                    <p className="text-xs font-medium text-gray-900">₹{currentNurse.ratePerHour}</p>
+                    <p className={`text-xs ${
+                      darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Rate/Hour</p>
+                    <p className={`text-xs font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>₹{currentNurse.ratePerHour}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Rating</p>
+                    <p className={`text-xs ${
+                      darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Rating</p>
                     <div className="mt-1">
                       {currentNurse.rating > 0 ? (
                         <div className="flex items-center">
@@ -821,7 +961,9 @@ const NurseDetails = () => {
                             <FaStar
                               key={star}
                               className={`w-2 h-2 ${
-                                star <= currentNurse.rating ? 'text-yellow-400' : 'text-gray-300'
+                                star <= currentNurse.rating 
+                                  ? 'text-yellow-400' 
+                                  : darkMode ? 'text-gray-500' : 'text-gray-300'
                               }`}
                             />
                           ))}
@@ -830,18 +972,26 @@ const NurseDetails = () => {
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Status</p>
-                    <p className="text-xs font-medium text-gray-900 capitalize">{currentNurse.status}</p>
+                    <p className={`text-xs ${
+                      darkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Status</p>
+                    <p className={`text-xs font-medium capitalize ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.status}</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Languages Spoken</p>
+                  <p className={`text-xs ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>Languages Spoken</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {currentNurse.languagesSpoken.length > 0 ? currentNurse.languagesSpoken.map((lang, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800"
+                        className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium ${
+                          darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800'
+                        }`}
                       >
                         {lang}
                       </span>
@@ -850,26 +1000,44 @@ const NurseDetails = () => {
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Location</p>
+                  <p className={`text-xs ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>Location</p>
                   <div className="flex items-center mt-1">
-                    <MdLocationOn className="text-gray-400 mr-1 text-xs" />
-                    <p className="text-xs font-medium text-gray-900">{currentNurse.location}</p>
+                    <MdLocationOn className={`mr-1 text-xs ${
+                      darkMode ? 'text-gray-500' : 'text-gray-400'
+                    }`} />
+                    <p className={`text-xs font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.location}</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Availability</p>
-                  <p className="text-xs font-medium text-gray-900">{currentNurse.availability}</p>
+                  <p className={`text-xs ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>Availability</p>
+                  <p className={`text-xs font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.availability}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Duration</p>
-                  <p className="text-xs font-medium text-gray-900 capitalize">{currentNurse.duration}</p>
+                  <p className={`text-xs ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>Duration</p>
+                  <p className={`text-xs font-medium capitalize ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.duration}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Hiring ID</p>
-                  <p className="text-xs font-medium text-gray-900">{currentNurse.hiringId}</p>
+                  <p className={`text-xs ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>Hiring ID</p>
+                  <p className={`text-xs font-medium ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{currentNurse.hiringId}</p>
                 </div>
 
                 <div className="pt-2">
@@ -877,7 +1045,9 @@ const NurseDetails = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowViewModal(false)}
-                    className="w-full text-xs h-8"
+                    className={`w-full text-xs h-8 ${
+                      darkMode ? 'border-gray-600 hover:bg-gray-700' : ''
+                    }`}
                   >
                     Close
                   </Button>
@@ -891,13 +1061,17 @@ const NurseDetails = () => {
       {/* Edit Nurse Modal */}
       {showEditModal && currentNurse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-2 z-[60]">
-          <div className="bg-white rounded-lg shadow-xl max-w-full w-full max-h-[95vh] overflow-y-auto mx-2">
+          <div className={`rounded-lg shadow-xl max-w-full w-full max-h-[95vh] overflow-y-auto mx-2 ${
+            darkMode ? 'bg-gray-800' : 'bg-white'
+          }`}>
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Edit Nurse</h2>
+                <h2 className={`text-lg font-semibold ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}>Edit Nurse</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}
                 >
                   <FaTimes className="text-sm" />
                 </button>
@@ -905,53 +1079,71 @@ const NurseDetails = () => {
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Full Name *</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Full Name *</label>
                   <Input
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleFormChange}
                     required
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Experience</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>Experience</label>
                     <Input
                       name="experience"
                       type="number"
                       min="0"
                       value={formData.experience}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Rate/Hour</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>Rate/Hour</label>
                     <Input
                       name="ratePerHour"
                       type="number"
                       min="0"
                       value={formData.ratePerHour}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Specialty</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Specialty</label>
                   <Input
                     name="specialty"
                     value={formData.specialty}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Rating (0-5)</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Rating (0-5)</label>
                   <Input
                     name="rating"
                     type="number"
@@ -960,68 +1152,94 @@ const NurseDetails = () => {
                     step="0.1"
                     value={formData.rating}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Languages Spoken</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Languages Spoken</label>
                   <Input
                     name="languagesSpoken"
                     value={formData.languagesSpoken}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">City</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>City</label>
                     <Input
                       name="city"
                       value={formData.city}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Pin Code</label>
+                    <label className={`block text-xs font-medium mb-1 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>Pin Code</label>
                     <Input
                       name="pinCode"
                       value={formData.pinCode}
                       onChange={handleFormChange}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                      className={`text-xs h-8 ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Availability Days</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Availability Days</label>
                   <Input
                     name="availabilityDays"
                     value={formData.availabilityDays}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Availability Time</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Availability Time</label>
                   <Input
                     name="availabilityTime"
                     value={formData.availabilityTime}
                     onChange={handleFormChange}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-xs h-8"
+                    className={`text-xs h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Duration</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Duration</label>
                   <select
                     name="duration"
                     value={formData.duration}
                     onChange={handleFormChange}
-                    className="w-full border border-gray-300 rounded-md px-2 py-1 text-xs focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-8"
+                    className={`w-full border rounded-md px-2 py-1 text-xs focus:outline-none h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   >
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -1030,12 +1248,16 @@ const NurseDetails = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                  <label className={`block text-xs font-medium mb-1 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Status</label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleFormChange}
-                    className="w-full border border-gray-300 rounded-md px-2 py-1 text-xs focus:border-blue-500 focus:ring-blue-500 focus:outline-none h-8"
+                    className={`w-full border rounded-md px-2 py-1 text-xs focus:outline-none h-8 ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}
                   >
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
@@ -1048,7 +1270,9 @@ const NurseDetails = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowEditModal(false)}
-                    className="flex-1 text-xs h-8"
+                    className={`flex-1 text-xs h-8 ${
+                      darkMode ? 'border-gray-600 hover:bg-gray-700' : ''
+                    }`}
                   >
                     Cancel
                   </Button>

@@ -14,6 +14,7 @@ import {
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTheme } from './ThemeContext';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -21,13 +22,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const isHomePage = pathname === '/';
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
   const [mailAnchor, setMailAnchor] = useState<null | HTMLElement>(null);
   const [financeOpen, setFinanceOpen] = useState(false);
 
+  const { darkMode, toggleDarkMode } = useTheme();
+
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
 
   const handleNotifOpen = (event: React.MouseEvent<HTMLElement>) => setNotifAnchor(event.currentTarget);
   const handleNotifClose = () => setNotifAnchor(null);

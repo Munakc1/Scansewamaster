@@ -1,7 +1,7 @@
 // app/components/ThemeContext.tsx
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type ThemeContextType = {
   darkMode: boolean;
@@ -10,29 +10,39 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [darkMode, setDarkMode] = useState(false);
 
-  // Optional: Load dark mode preference from localStorage
   useEffect(() => {
-    const savedMode = localStorage.getItem('darkMode');
-    if (savedMode) {
-      setDarkMode(savedMode === 'true');
+    if (typeof window !== 'undefined') {
+      const savedMode = localStorage.getItem('darkMode') === 'true';
+      setDarkMode(savedMode);
+      updateThemeVariables(savedMode);
     }
   }, []);
 
-  // Optional: Save dark mode preference to localStorage
-  useEffect(() => {
-    localStorage.setItem('darkMode', String(darkMode));
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
+  const updateThemeVariables = (isDark: boolean) => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.style.setProperty('--background', '#0a0a0a');
+      root.style.setProperty('--foreground', '#ededed');
+      root.style.setProperty('--card-bg', '#1a1a1a');
+      root.style.setProperty('--card-border', '#2d2d2d');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.style.setProperty('--background', '#ffffff');
+      root.style.setProperty('--foreground', '#171717');
+      root.style.setProperty('--card-bg', '#ffffff');
+      root.style.setProperty('--card-border', '#e5e7eb');
     }
-  }, [darkMode]);
+  };
 
   const toggleDarkMode = () => {
-    setDarkMode(prev => !prev);
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    updateThemeVariables(newMode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('darkMode', String(newMode));
+    }
   };
 
   return (

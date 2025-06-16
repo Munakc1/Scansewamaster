@@ -8,6 +8,7 @@ import { MdDownload, MdFilterList, MdOutlineAttachMoney, MdMedicalServices } fro
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
+import { useTheme } from '../../components/ThemeContext';
 
 interface DoctorTransaction {
   id: string;
@@ -135,6 +136,7 @@ const calculateDailySummary = (transactions: DoctorTransaction[]): DailySummary[
 };
 
 const DoctorTransactions = () => {
+  const { darkMode } = useTheme();
   const [transactions, setTransactions] = useState<DoctorTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -360,33 +362,33 @@ const DoctorTransactions = () => {
   const dailySummaryData = calculateDailySummary(visibleTransactions);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Doctor Transactions</h1>
-            <p className="text-gray-600 mt-1">View and manage financial transactions with doctors</p>
+            <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Doctor Transactions</h1>
+            <p className={`mt-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>View and manage financial transactions with doctors</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button
               onClick={() => setShowFilters(!showFilters)}
               variant="outline"
-              className="border-gray-300"
+              className={`${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <MdFilterList className="mr-1" /> {showFilters ? 'Hide' : 'Show'} Filters
             </Button>
             <Button
               onClick={() => handleExport('csv')}
               variant="outline"
-              className="border-gray-300"
+              className={`${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <MdDownload className="mr-1" /> Export CSV
             </Button>
             <Button
               onClick={() => handleExport('json')}
               variant="outline"
-              className="border-gray-300"
+              className={`${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300'}`}
             >
               <MdDownload className="mr-1" /> Export JSON
             </Button>
@@ -395,35 +397,35 @@ const DoctorTransactions = () => {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className={`rounded-lg shadow-sm border p-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Consultations</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-1">{visibleTransactions.length}</p>
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Total Consultations</p>
+                <p className={`text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{visibleTransactions.length}</p>
               </div>
-              <div className="p-3 rounded-full bg-blue-100 text-blue-600">
+              <div className={`p-3 rounded-full ${darkMode ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                 <MdMedicalServices className="text-xl" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className={`rounded-lg shadow-sm border p-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-1">₹{totalRevenue.toFixed(2)}</p>
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Total Revenue</p>
+                <p className={`text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>₹{totalRevenue.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-full bg-green-100 text-green-600">
+              <div className={`p-3 rounded-full ${darkMode ? 'bg-green-900 text-green-400' : 'bg-green-100 text-green-600'}`}>
                 <MdOutlineAttachMoney className="text-xl" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className={`rounded-lg shadow-sm border p-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Platform Fees</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-1">₹{totalPlatformFees.toFixed(2)}</p>
+                <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Total Platform Fees</p>
+                <p className={`text-2xl font-semibold mt-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>₹{totalPlatformFees.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-full bg-purple-100 text-purple-600">
+              <div className={`p-3 rounded-full ${darkMode ? 'bg-purple-900 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                 <FaFilter className="text-xl" />
               </div>
             </div>
@@ -432,25 +434,25 @@ const DoctorTransactions = () => {
 
         {/* Filters */}
         {showFilters && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className={`rounded-lg shadow-sm border p-6 mb-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Search</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaSearch className="text-gray-400" />
+                    <FaSearch className={`${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
                   </div>
                   <Input
                     placeholder="Search transactions..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className={`pl-10 ${darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'}`}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Date Range</label>
                 <div className="relative">
                   <DatePicker
                     selectsRange={true}
@@ -459,20 +461,20 @@ const DoctorTransactions = () => {
                     onChange={(update) => setDateRange(update)}
                     isClearable={true}
                     placeholderText="Select date range"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none pl-10"
+                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none pl-10 ${darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 focus:border-blue-500'}`}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaRegCalendarAlt className="text-gray-400" />
+                    <FaRegCalendarAlt className={`${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Status</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 focus:border-blue-500'}`}
                 >
                   <option value="all">All Statuses</option>
                   {allStatuses.map((status) => (
@@ -484,11 +486,11 @@ const DoctorTransactions = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+                <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Doctor</label>
                 <select
                   value={doctorFilter}
                   onChange={(e) => setDoctorFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 focus:border-blue-500'}`}
                 >
                   <option value="all">All Doctors</option>
                   {allDoctors.map((doctor) => (
@@ -500,11 +502,11 @@ const DoctorTransactions = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Specialization</label>
                 <select
                   value={specializationFilter}
                   onChange={(e) => setSpecializationFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 focus:border-blue-500'}`}
                 >
                   <option value="all">All Specializations</option>
                   {allSpecializations.map((spec) => (
@@ -516,11 +518,11 @@ const DoctorTransactions = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Consultation Type</label>
+                <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Consultation Type</label>
                 <select
                   value={consultationTypeFilter}
                   onChange={(e) => setConsultationTypeFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 focus:border-blue-500'}`}
                 >
                   <option value="all">All Types</option>
                   {allConsultationTypes.map((type) => (
@@ -535,67 +537,67 @@ const DoctorTransactions = () => {
         )}
 
         {/* Doctor Summary */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Doctor Summary</h2>
+        <div className={`rounded-lg shadow-sm border overflow-hidden mb-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className={`p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Doctor Summary</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Doctor
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Specialization
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Consultations
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Total Fees
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Platform Fees
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Avg Duration
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                     Last Consultation
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className={`divide-y ${darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
                 {doctorSummaries.map((doctor) => (
-                  <tr key={doctor.doctorId} className="hover:bg-gray-50 transition-colors">
+                  <tr key={doctor.doctorId} className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{doctor.doctorName}</div>
-                      <div className="text-sm text-gray-500">{doctor.doctorId}</div>
+                      <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{doctor.doctorName}</div>
+                      <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{doctor.doctorId}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       {doctor.specialization}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       {doctor.totalTransactions}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       ₹{doctor.totalFees.toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       ₹{doctor.totalPlatformFees.toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       {doctor.averageConsultationDuration?.toFixed(1) || 'N/A'} min
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       {new Date(doctor.lastTransactionDate).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
                 {doctorSummaries.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={7} className={`px-6 py-8 text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       No doctor data available with current filters.
                     </td>
                   </tr>
@@ -606,14 +608,14 @@ const DoctorTransactions = () => {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Consultation Details</h2>
+        <div className={`rounded-lg shadow-sm border overflow-hidden mb-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className={`p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Consultation Details</h2>
           </div>
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading transactions...</p>
+              <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading transactions...</p>
             </div>
           ) : error ? (
             <div className="p-8 text-center">
@@ -622,75 +624,75 @@ const DoctorTransactions = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className={darkMode ? 'bg-gray-700' : 'bg-gray-50'}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Transaction ID
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Doctor
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Consultation
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Fee
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Platform Fee
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Payment
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${darkMode ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
                   {visibleTransactions.map((transaction) => (
-                    <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={transaction.id} className={darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-blue-600">{transaction.transactionId}</div>
+                        <div className={`font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{transaction.transactionId}</div>
                         {transaction.appointmentId && (
-                          <div className="text-xs text-gray-500">Appt: {transaction.appointmentId}</div>
+                          <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Appt: {transaction.appointmentId}</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {new Date(transaction.date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{transaction.doctorName}</div>
-                        <div className="text-xs text-gray-500">{transaction.specialization}</div>
+                        <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{transaction.doctorName}</div>
+                        <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{transaction.specialization}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 capitalize">{transaction.consultationType}</div>
-                        <div className="text-xs text-gray-500">{transaction.duration} min</div>
+                        <div className={`text-sm capitalize ${darkMode ? 'text-white' : 'text-gray-900'}`}>{transaction.consultationType}</div>
+                        <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{transaction.duration} min</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         ₹{transaction.consultationFee.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">₹{transaction.platformFee.toFixed(2)}</div>
-                        <div className="text-xs text-gray-500">{(transaction.platformFeeRate * 100).toFixed(1)}%</div>
+                        <div className={`text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>₹{transaction.platformFee.toFixed(2)}</div>
+                        <div className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{(transaction.platformFeeRate * 100).toFixed(1)}%</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {transaction.paymentMethod}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${transaction.status === 'completed'
-                            ? 'bg-green-100 text-green-800'
+                            ? darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                             : transaction.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
+                              ? darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800'
                               : transaction.status === 'failed'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-purple-100 text-purple-800'
+                                ? darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
+                                : darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                           }`}>
                           {transaction.status}
                         </span>
@@ -698,7 +700,7 @@ const DoctorTransactions = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={() => setSelectedTransaction(transaction)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className={darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-900'}
                         >
                           View Details
                         </button>
@@ -707,7 +709,7 @@ const DoctorTransactions = () => {
                   ))}
                   {visibleTransactions.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={9} className={`px-6 py-8 text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                         No transactions found matching your criteria.
                       </td>
                     </tr>
@@ -719,11 +721,11 @@ const DoctorTransactions = () => {
         </div>
 
         {/* Financial Trends Chart */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className={`rounded-lg shadow-sm border p-6 mb-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-xl font-bold">Financial Overview</h2>
-              <p className="text-sm text-gray-500">Showing financial performance</p>
+              <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Financial Overview</h2>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Showing financial performance</p>
             </div>
           </div>
 
@@ -739,18 +741,44 @@ const DoctorTransactions = () => {
                   bottom: 5,
                 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis yAxisId="left" orientation="left" stroke="#3B82F6" />
-                <YAxis yAxisId="right" orientation="right" stroke="#EC4899" />
+                <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#4B5563' : '#E5E7EB'} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                  tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                />
+                <YAxis 
+                  yAxisId="left" 
+                  orientation="left" 
+                  stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                  tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                />
+                <YAxis 
+                  yAxisId="right" 
+                  orientation="right" 
+                  stroke={darkMode ? '#D1D5DB' : '#4B5563'} 
+                  tick={{ fill: darkMode ? '#F3F4F6' : '#1F2937' }}
+                />
                 <Tooltip
+                  contentStyle={{ 
+                    backgroundColor: darkMode ? '#374151' : '#FFFFFF',
+                    borderColor: darkMode ? '#4B5563' : '#E5E7EB',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    color: darkMode ? '#F3F4F6' : '#1F2937',
+                  }}
                   formatter={(value: number, name: string) => {
                     if (name === 'Revenue') return [`₹${value.toFixed(2)}`, name];
                     if (name === 'Platform Fees') return [`₹${value.toFixed(2)}`, name];
                     return [value, name];
                   }}
                 />
-                <Legend />
+                <Legend 
+                  wrapperStyle={{ 
+                    color: darkMode ? '#F3F4F6' : '#1F2937',
+                    paddingTop: '20px'
+                  }}
+                />
                 <Area
                   yAxisId="left"
                   type="monotone"
@@ -776,21 +804,21 @@ const DoctorTransactions = () => {
         </div>
 
         {/* Summary */}
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className={`mt-6 text-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           Showing {visibleTransactions.length} of {transactions.length} transactions
         </div>
       </div>
 
       {/* Transaction Details Modal */}
       {selectedTransaction && (
-        <div className="fixed inset-0 bg-white bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className={`rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Consultation Details</h2>
+                <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Consultation Details</h2>
                 <button
                   onClick={() => setSelectedTransaction(null)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className={darkMode ? 'text-gray-400 hover:text-gray-300 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -801,34 +829,34 @@ const DoctorTransactions = () => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Consultation Information</h3>
+                    <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-4`}>Consultation Information</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Transaction ID:</span>
-                        <span className="text-sm font-medium text-gray-900">{selectedTransaction.transactionId}</span>
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Transaction ID:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedTransaction.transactionId}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Date:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Date:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           {new Date(selectedTransaction.date).toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Status:</span>
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Status:</span>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${selectedTransaction.status === 'completed'
-                            ? 'bg-green-100 text-green-800'
+                            ? darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                             : selectedTransaction.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
+                              ? darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800'
                               : selectedTransaction.status === 'failed'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-purple-100 text-purple-800'
+                                ? darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
+                                : darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                           }`}>
                           {selectedTransaction.status}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Payment Method:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Payment Method:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           {selectedTransaction.paymentMethod}
                         </span>
                       </div>
@@ -836,29 +864,29 @@ const DoctorTransactions = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Financial Details</h3>
+                    <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-4`}>Financial Details</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Consultation Fee:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Consultation Fee:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           ₹{selectedTransaction.consultationFee.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Platform Fee Rate:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Platform Fee Rate:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           {(selectedTransaction.platformFeeRate * 100).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Platform Fee:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Platform Fee:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           ₹{selectedTransaction.platformFee.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Net Amount:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Net Amount:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           ₹{(selectedTransaction.consultationFee - selectedTransaction.platformFee).toFixed(2)}
                         </span>
                       </div>
@@ -867,23 +895,23 @@ const DoctorTransactions = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Doctor Information</h3>
+                  <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-4`}>Doctor Information</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Doctor Name:</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Doctor Name:</span>
+                      <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {selectedTransaction.doctorName}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Specialization:</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Specialization:</span>
+                      <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {selectedTransaction.specialization}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Doctor ID:</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Doctor ID:</span>
+                      <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {selectedTransaction.doctorId}
                       </span>
                     </div>
@@ -891,32 +919,32 @@ const DoctorTransactions = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Consultation Details</h3>
+                  <h3 className={`text-lg font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-4`}>Consultation Details</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Consultation Type:</span>
-                      <span className="text-sm font-medium text-gray-900 capitalize">
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Consultation Type:</span>
+                      <span className={`text-sm font-medium capitalize ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {selectedTransaction.consultationType}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Duration:</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Duration:</span>
+                      <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {selectedTransaction.duration} minutes
                       </span>
                     </div>
                     {selectedTransaction.appointmentId && (
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Appointment ID:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Appointment ID:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           {selectedTransaction.appointmentId}
                         </span>
                       </div>
                     )}
                     {selectedTransaction.patientId && (
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Patient ID:</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Patient ID:</span>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                           {selectedTransaction.patientId}
                         </span>
                       </div>
