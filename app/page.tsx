@@ -44,6 +44,11 @@ export default function LoginPage() {
     router.push('/dashboard');
   };
 
+  const handleDemoLogin = () => {
+    localStorage.setItem('loggedIn', 'true');
+    router.push('/dashboard');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
       <div
@@ -97,6 +102,15 @@ export default function LoginPage() {
             Sign In
           </button>
         </form>
+
+        <div className="mt-4">
+          <button
+            onClick={handleDemoLogin}
+            className="w-full bg-gray-100 text-gray-700 font-semibold py-3 rounded-lg shadow-sm transition-all duration-300 hover:bg-gray-200 border border-gray-300"
+          >
+            Try Demo Account
+          </button>
+        </div>
 
         <p className="text-xs text-center mt-6 text-gray-500">
           By signing in, you agree to our{' '}
