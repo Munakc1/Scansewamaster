@@ -1,120 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FaFileMedical, FaSearch, FaFilter, FaFileUpload, FaFileDownload, FaTimes } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
 import { useTheme } from '../components/ThemeContext';
-
-interface Order {
-  id: string;
-  patientName: string;
-  patientId: string;
-  doctorName: string;
-  doctorId: string;
-  orderDate: string;
-  status: 'pending' | 'completed' | 'cancelled' | 'in-progress';
-  items: {
-    name: string;
-    type: 'medicine' | 'test' | 'procedure';
-    quantity?: number;
-    instructions?: string;
-  }[];
-  totalAmount: number;
-  priority: 'routine' | 'urgent' | 'stat';
-}
-
-// Dummy orders data
-const dummyOrders: Order[] = [
-  {
-    id: 'ORD-1001',
-    patientName: 'John Doe',
-    patientId: 'PT-1001',
-    doctorName: 'Dr. Sarah Wilson',
-    doctorId: 'DR-2001',
-    orderDate: '2024-03-15T09:30:00',
-    status: 'completed',
-    items: [
-      { name: 'Paracetamol 500mg', type: 'medicine', quantity: 30, instructions: 'Take 1 tablet every 6 hours as needed for pain' },
-      { name: 'Complete Blood Count', type: 'test' },
-      { name: 'ECG', type: 'procedure' }
-    ],
-    totalAmount: 1250,
-    priority: 'routine'
-  },
-  {
-    id: 'ORD-1002',
-    patientName: 'Jane Smith',
-    patientId: 'PT-1002',
-    doctorName: 'Dr. Michael Chen',
-    doctorId: 'DR-2002',
-    orderDate: '2024-03-16T14:15:00',
-    status: 'in-progress',
-    items: [
-      { name: 'Amoxicillin 500mg', type: 'medicine', quantity: 20, instructions: 'Take 1 capsule every 8 hours for 7 days' },
-      { name: 'Urine Culture', type: 'test' }
-    ],
-    totalAmount: 850,
-    priority: 'urgent'
-  },
-  {
-    id: 'ORD-1003',
-    patientName: 'Amit Verma',
-    patientId: 'PT-1003',
-    doctorName: 'Dr. Emily Rodriguez',
-    doctorId: 'DR-2003',
-    orderDate: '2024-03-17T11:00:00',
-    status: 'pending',
-    items: [
-      { name: 'MRI Brain', type: 'procedure' },
-      { name: 'Lipid Profile', type: 'test' }
-    ],
-    totalAmount: 4500,
-    priority: 'routine'
-  },
-  {
-    id: 'ORD-1004',
-    patientName: 'Priya Patel',
-    patientId: 'PT-1004',
-    doctorName: 'Dr. Lisa Thompson',
-    doctorId: 'DR-2004',
-    orderDate: '2024-03-18T16:45:00',
-    status: 'cancelled',
-    items: [
-      { name: 'Ibuprofen 400mg', type: 'medicine', quantity: 15, instructions: 'Take 1 tablet every 8 hours as needed' }
-    ],
-    totalAmount: 300,
-    priority: 'routine'
-  },
-  {
-    id: 'ORD-1005',
-    patientName: 'David Johnson',
-    patientId: 'PT-1005',
-    doctorName: 'Dr. Robert Kim',
-    doctorId: 'DR-2005',
-    orderDate: '2024-03-19T08:20:00',
-    status: 'in-progress',
-    items: [
-      { name: 'CT Scan Abdomen', type: 'procedure' },
-      { name: 'Liver Function Test', type: 'test' },
-      { name: 'Omeprazole 20mg', type: 'medicine', quantity: 14, instructions: 'Take 1 capsule every morning before food' }
-    ],
-    totalAmount: 6200,
-    priority: 'urgent'
-  }
-];
+import { fetchOrders, updateOrderStatus as apiUpdateOrderStatus, Order } from '@/lib/api/orders';
 
 const OrderManagement = () => {
   const { darkMode } = useTheme();
-  const [orders, setOrders] = useState<Order[]>(dummyOrders);
-  const [loading, setLoading] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchOrders();
+        setOrders(data);
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        setError('Failed to load orders. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOrders();
+  }, []);
 
   const handleExport = (type: 'csv' | 'json') => {
     const dataToExport = visibleOrders.map(order => ({
@@ -188,11 +109,17 @@ const OrderManagement = () => {
     setShowOrderDetails(true);
   };
 
-  const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
-    setShowOrderDetails(false);
+  const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
+    try {
+      const updatedOrder = await apiUpdateOrderStatus(orderId, newStatus);
+      setOrders(orders.map(order => 
+        order.id === orderId ? updatedOrder : order
+      ));
+      setShowOrderDetails(false);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('Failed to update order status');
+    }
   };
 
   const visibleOrders = orders.filter((order) => {
@@ -238,10 +165,6 @@ const OrderManagement = () => {
       default:
         return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
     }
-  };
-
-  const getItemBadgeColor = () => {
-    return darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800';
   };
 
   return (

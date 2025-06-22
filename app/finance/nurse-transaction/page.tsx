@@ -1,3 +1,4 @@
+// app/finance/nurse-transactions.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -9,119 +10,14 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 import { useTheme } from '../../components/ThemeContext';
-
-interface NurseTransaction {
-  id: string;
-  nurseId: string;
-  nurseName: string;
-  transactionId: string;
-  date: string;
-  amount: number;
-  serviceType: string;
-  serviceDetails: string;
-  duration: number; // in hours
-  patientId?: string;
-  patientName?: string;
-  paymentMethod: string;
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
-  visitId?: string;
-  rating?: number;
-}
-
-interface NurseSummary {
-  nurseId: string;
-  nurseName: string;
-  totalTransactions: number;
-  totalAmount: number;
-  totalHours: number;
-  lastTransactionDate: string;
-  averageRating?: number;
-}
-
-interface DailySummary {
-  date: string;
-  transactions: number;
-  revenue: number;
-  averageAmount: number;
-}
-
-const transformTransactionData = (data: any[]): NurseTransaction[] =>
-  data.map((t) => ({
-    id: t._id || `trans-${Math.random().toString(36).substr(2, 9)}`,
-    nurseId: t.nurseId,
-    nurseName: t.nurseName || 'Unknown Nurse',
-    transactionId: t.transactionId || `TXN-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
-    date: t.date || new Date().toISOString(),
-    amount: t.amount || 0,
-    serviceType: t.serviceType || 'Home Care',
-    serviceDetails: t.serviceDetails || 'General Nursing Care',
-    duration: t.duration || 1,
-    patientId: t.patientId,
-    patientName: t.patientName,
-    paymentMethod: t.paymentMethod || 'Online',
-    status: t.status?.toLowerCase() || 'completed',
-    visitId: t.visitId,
-    rating: t.rating,
-  }));
-
-const calculateSummary = (transactions: NurseTransaction[]): NurseSummary[] => {
-  const nurseMap = new Map<string, NurseSummary>();
-
-  transactions.forEach((t) => {
-    if (!nurseMap.has(t.nurseId)) {
-      nurseMap.set(t.nurseId, {
-        nurseId: t.nurseId,
-        nurseName: t.nurseName,
-        totalTransactions: 0,
-        totalAmount: 0,
-        totalHours: 0,
-        lastTransactionDate: t.date,
-        averageRating: 0,
-      });
-    }
-
-    const summary = nurseMap.get(t.nurseId)!;
-    summary.totalTransactions += 1;
-    summary.totalAmount += t.amount;
-    summary.totalHours += t.duration;
-    if (new Date(t.date) > new Date(summary.lastTransactionDate)) {
-      summary.lastTransactionDate = t.date;
-    }
-    if (t.rating) {
-      const currentTotalRating = (summary.averageRating || 0) * (summary.totalTransactions - 1);
-      summary.averageRating = (currentTotalRating + t.rating) / summary.totalTransactions;
-    }
-  });
-
-  return Array.from(nurseMap.values());
-};
-
-const calculateDailySummary = (transactions: NurseTransaction[]): DailySummary[] => {
-  const dailyMap = new Map<string, DailySummary>();
-
-  transactions.forEach((t) => {
-    const date = new Date(t.date).toISOString().split('T')[0];
-    const formattedDate = new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-    if (!dailyMap.has(date)) {
-      dailyMap.set(date, {
-        date: formattedDate,
-        transactions: 0,
-        revenue: 0,
-        averageAmount: 0,
-      });
-    }
-
-    const daily = dailyMap.get(date)!;
-    daily.transactions += 1;
-    daily.revenue += t.amount;
-    daily.averageAmount = daily.revenue / daily.transactions;
-  });
-
-  return Array.from(dailyMap.values()).sort((a, b) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
-};
+import { 
+  fetchNurseTransactions,
+  calculateNurseSummary,
+  calculateDailySummary,
+  NurseTransaction,
+  NurseSummary,
+  DailySummary
+} from '@/lib/api/nurse-transactions';
 
 const NurseTransactions = () => {
   const { darkMode } = useTheme();
@@ -138,132 +34,12 @@ const NurseTransactions = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<NurseTransaction | null>(null);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const loadTransactions = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Mock nurse transaction data
-        const mockData = [
-          {
-            _id: '1',
-            nurseId: 'NUR-1001',
-            nurseName: 'Sarah Johnson',
-            transactionId: 'TXN-20230601-001',
-            date: '2023-06-01T10:30:00Z',
-            amount: 2500,
-            serviceType: 'Home Care',
-            serviceDetails: 'Post-operative care',
-            duration: 4,
-            patientId: 'PAT-5001',
-            patientName: 'John Doe',
-            paymentMethod: 'Credit Card',
-            status: 'completed',
-            visitId: 'VIS-1001',
-            rating: 4.5
-          },
-          {
-            _id: '2',
-            nurseId: 'NUR-1002',
-            nurseName: 'Michael Chen',
-            transactionId: 'TXN-20230601-002',
-            date: '2023-06-01T11:15:00Z',
-            amount: 1800,
-            serviceType: 'Elderly Care',
-            serviceDetails: 'Daily assistance',
-            duration: 3,
-            patientId: 'PAT-5002',
-            patientName: 'Jane Smith',
-            paymentMethod: 'Insurance',
-            status: 'completed',
-            visitId: 'VIS-1002',
-            rating: 5
-          },
-          {
-            _id: '3',
-            nurseId: 'NUR-1001',
-            nurseName: 'Sarah Johnson',
-            transactionId: 'TXN-20230602-001',
-            date: '2023-06-02T09:45:00Z',
-            amount: 3000,
-            serviceType: 'Specialized Care',
-            serviceDetails: 'Dementia care',
-            duration: 6,
-            patientId: 'PAT-5003',
-            patientName: 'Robert Wilson',
-            paymentMethod: 'Debit Card',
-            status: 'completed',
-            visitId: 'VIS-1003',
-            rating: 4
-          },
-          {
-            _id: '4',
-            nurseId: 'NUR-1003',
-            nurseName: 'Emily Davis',
-            transactionId: 'TXN-20230603-001',
-            date: '2023-06-03T14:20:00Z',
-            amount: 2200,
-            serviceType: 'Postpartum Care',
-            serviceDetails: 'Newborn care assistance',
-            duration: 4,
-            patientId: 'PAT-5004',
-            patientName: 'Lisa Brown',
-            paymentMethod: 'Insurance',
-            status: 'pending',
-            visitId: 'VIS-1004'
-          },
-          {
-            _id: '5',
-            nurseId: 'NUR-1004',
-            nurseName: 'David Wilson',
-            transactionId: 'TXN-20230604-001',
-            date: '2023-06-04T10:00:00Z',
-            amount: 2000,
-            serviceType: 'Home Care',
-            serviceDetails: 'Wound dressing',
-            duration: 2,
-            patientId: 'PAT-5005',
-            patientName: 'Emily Johnson',
-            paymentMethod: 'Cash',
-            status: 'completed',
-            visitId: 'VIS-1005',
-            rating: 4.8
-          },
-          {
-            _id: '6',
-            nurseId: 'NUR-1002',
-            nurseName: 'Michael Chen',
-            transactionId: 'TXN-20230605-001',
-            date: '2023-06-05T13:45:00Z',
-            amount: 1500,
-            serviceType: 'Elderly Care',
-            serviceDetails: 'Medication administration',
-            duration: 2,
-            patientId: 'PAT-5006',
-            patientName: 'William Taylor',
-            paymentMethod: 'Credit Card',
-            status: 'failed',
-            visitId: 'VIS-1006'
-          },
-          {
-            _id: '7',
-            nurseId: 'NUR-1005',
-            nurseName: 'Jessica Lee',
-            transactionId: 'TXN-20230606-001',
-            date: '2023-06-06T16:30:00Z',
-            amount: 3500,
-            serviceType: 'Specialized Care',
-            serviceDetails: 'Palliative care',
-            duration: 8,
-            patientId: 'PAT-5007',
-            patientName: 'Margaret Clark',
-            paymentMethod: 'Online Payment',
-            status: 'refunded',
-            visitId: 'VIS-1007'
-          }
-        ];
-
-        setTransactions(transformTransactionData(mockData));
+        const data = await fetchNurseTransactions();
+        setTransactions(data);
       } catch (err) {
         console.error('Failed to load transactions', err);
         setError('Unable to load transactions. Please try again later.');
@@ -272,7 +48,7 @@ const NurseTransactions = () => {
       }
     };
 
-    fetchTransactions();
+    loadTransactions();
   }, []);
 
   const handleExport = (type: 'csv' | 'json') => {
@@ -315,26 +91,21 @@ const NurseTransactions = () => {
   };
 
   const visibleTransactions = transactions.filter((t) => {
-    // Search filter
     const matchesSearch =
       search === '' ||
       t.nurseName.toLowerCase().includes(search.toLowerCase()) ||
       t.transactionId.toLowerCase().includes(search.toLowerCase()) ||
       (t.patientName && t.patientName.toLowerCase().includes(search.toLowerCase()));
 
-    // Status filter
     const matchesStatus =
       statusFilter === 'all' || t.status === statusFilter;
 
-    // Nurse filter
     const matchesNurse =
       nurseFilter === 'all' || t.nurseId === nurseFilter;
 
-    // Service filter
     const matchesService =
       serviceFilter === 'all' || t.serviceType.toLowerCase() === serviceFilter.toLowerCase();
 
-    // Date range filter
     const transactionDate = new Date(t.date);
     const matchesDateRange =
       (!startDate || transactionDate >= startDate) &&
@@ -343,7 +114,7 @@ const NurseTransactions = () => {
     return matchesSearch && matchesStatus && matchesNurse && matchesService && matchesDateRange;
   });
 
-  const nurseSummaries = calculateSummary(visibleTransactions);
+  const nurseSummaries = calculateNurseSummary(visibleTransactions);
   const allNurses = Array.from(new Set(transactions.map(t => ({ id: t.nurseId, name: t.nurseName }))));
   const allStatuses = ['completed', 'pending', 'failed', 'refunded'];
   const allServiceTypes = Array.from(new Set(transactions.map(t => t.serviceType)));
@@ -351,7 +122,6 @@ const NurseTransactions = () => {
   const totalRevenue = visibleTransactions.reduce((sum, t) => sum + t.amount, 0);
   const totalHours = visibleTransactions.reduce((sum, t) => sum + t.duration, 0);
 
-  // Prepare data for the line chart
   const dailySummaryData = calculateDailySummary(visibleTransactions);
 
   return (

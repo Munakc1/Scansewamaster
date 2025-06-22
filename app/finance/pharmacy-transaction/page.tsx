@@ -12,22 +12,22 @@ import { useTheme } from '../../components/ThemeContext';
 
 interface PharmacyTransaction {
   id: string;
-  pharmacyId: string;
-  pharmacyName: string;
   transactionId: string;
   date: string;
+  pharmacyId: string;
+  pharmacyName: string;
   amount: number;
   commission: number;
   commissionRate: number;
   paymentMethod: string;
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
+  status: string;
   orderId?: string;
   customerId?: string;
-  items?: {
+  items?: Array<{
     name: string;
     quantity: number;
     price: number;
-  }[];
+  }>;
 }
 
 interface PharmacySummary {
@@ -41,53 +41,108 @@ interface PharmacySummary {
 
 interface DailySummary {
   date: string;
-  transactions: number;
   revenue: number;
   commission: number;
 }
 
-const transformTransactionData = (data: any[]): PharmacyTransaction[] =>
-  data.map((t) => ({
-    id: t._id || `trans-${Math.random().toString(36).substr(2, 9)}`,
-    pharmacyId: t.pharmacyId,
-    pharmacyName: t.pharmacyName || 'Unknown Pharmacy',
-    transactionId: t.transactionId || `TXN-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
-    date: t.date || new Date().toISOString(),
-    amount: t.amount || 0,
-    commission: t.commission || 0,
-    commissionRate: t.commissionRate || 0.1, // Default 10% commission
-    paymentMethod: t.paymentMethod || 'Online',
-    status: t.status?.toLowerCase() || 'completed',
-    orderId: t.orderId,
-    customerId: t.customerId,
-    items: t.items?.map((i: any) => ({
-      name: i.name || 'Unknown Item',
-      quantity: i.quantity || 1,
-      price: i.price || 0,
-    })) || [],
-  }));
+// Mock API functions
+const fetchPharmacyTransactions = async (): Promise<PharmacyTransaction[]> => {
+  // In a real app, this would be an API call
+  return [
+    {
+      id: '1',
+      transactionId: 'TXN12345',
+      date: '2023-05-15',
+      pharmacyId: 'PHARM001',
+      pharmacyName: 'City Pharmacy',
+      amount: 1250.75,
+      commission: 125.08,
+      commissionRate: 0.1,
+      paymentMethod: 'Credit Card',
+      status: 'completed',
+      orderId: 'ORD67890',
+      customerId: 'CUST123',
+      items: [
+        { name: 'Pain Relief Tablets', quantity: 2, price: 250 },
+        { name: 'Vitamin C', quantity: 1, price: 500 },
+        { name: 'Bandages', quantity: 5, price: 100.15 }
+      ]
+    },
+    {
+      id: '2',
+      transactionId: 'TXN12346',
+      date: '2023-05-16',
+      pharmacyId: 'PHARM002',
+      pharmacyName: 'Village Meds',
+      amount: 850.50,
+      commission: 85.05,
+      commissionRate: 0.1,
+      paymentMethod: 'UPI',
+      status: 'completed',
+      orderId: 'ORD67891'
+    },
+    {
+      id: '3',
+      transactionId: 'TXN12347',
+      date: '2023-05-16',
+      pharmacyId: 'PHARM001',
+      pharmacyName: 'City Pharmacy',
+      amount: 320.25,
+      commission: 32.03,
+      commissionRate: 0.1,
+      paymentMethod: 'Debit Card',
+      status: 'pending'
+    },
+    {
+      id: '4',
+      transactionId: 'TXN12348',
+      date: '2023-05-17',
+      pharmacyId: 'PHARM003',
+      pharmacyName: '24/7 Pharmacy',
+      amount: 1560.00,
+      commission: 156.00,
+      commissionRate: 0.1,
+      paymentMethod: 'Net Banking',
+      status: 'completed',
+      orderId: 'ORD67892'
+    },
+    {
+      id: '5',
+      transactionId: 'TXN12349',
+      date: '2023-05-18',
+      pharmacyId: 'PHARM002',
+      pharmacyName: 'Village Meds',
+      amount: 420.80,
+      commission: 42.08,
+      commissionRate: 0.1,
+      paymentMethod: 'UPI',
+      status: 'failed'
+    }
+  ];
+};
 
-const calculateSummary = (transactions: PharmacyTransaction[]): PharmacySummary[] => {
+const calculatePharmacySummary = (transactions: PharmacyTransaction[]): PharmacySummary[] => {
   const pharmacyMap = new Map<string, PharmacySummary>();
 
-  transactions.forEach((t) => {
-    if (!pharmacyMap.has(t.pharmacyId)) {
-      pharmacyMap.set(t.pharmacyId, {
-        pharmacyId: t.pharmacyId,
-        pharmacyName: t.pharmacyName,
+  transactions.forEach(transaction => {
+    if (!pharmacyMap.has(transaction.pharmacyId)) {
+      pharmacyMap.set(transaction.pharmacyId, {
+        pharmacyId: transaction.pharmacyId,
+        pharmacyName: transaction.pharmacyName,
         totalTransactions: 0,
         totalAmount: 0,
         totalCommission: 0,
-        lastTransactionDate: t.date,
+        lastTransactionDate: transaction.date
       });
     }
 
-    const summary = pharmacyMap.get(t.pharmacyId)!;
+    const summary = pharmacyMap.get(transaction.pharmacyId)!;
     summary.totalTransactions += 1;
-    summary.totalAmount += t.amount;
-    summary.totalCommission += t.commission;
-    if (new Date(t.date) > new Date(summary.lastTransactionDate)) {
-      summary.lastTransactionDate = t.date;
+    summary.totalAmount += transaction.amount;
+    summary.totalCommission += transaction.commission;
+
+    if (new Date(transaction.date) > new Date(summary.lastTransactionDate)) {
+      summary.lastTransactionDate = transaction.date;
     }
   });
 
@@ -97,28 +152,25 @@ const calculateSummary = (transactions: PharmacyTransaction[]): PharmacySummary[
 const calculateDailySummary = (transactions: PharmacyTransaction[]): DailySummary[] => {
   const dailyMap = new Map<string, DailySummary>();
 
-  transactions.forEach((t) => {
-    const date = new Date(t.date).toISOString().split('T')[0];
-    const formattedDate = new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
+  transactions.forEach(transaction => {
+    const date = new Date(transaction.date).toISOString().split('T')[0];
+    
     if (!dailyMap.has(date)) {
       dailyMap.set(date, {
-        date: formattedDate,
-        transactions: 0,
+        date,
         revenue: 0,
-        commission: 0,
+        commission: 0
       });
     }
 
     const daily = dailyMap.get(date)!;
-    daily.transactions += 1;
-    daily.revenue += t.amount;
-    daily.commission += t.commission;
+    daily.revenue += transaction.amount;
+    daily.commission += transaction.commission;
   });
 
-  return Array.from(dailyMap.values()).sort((a, b) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
+  return Array.from(dailyMap.values()).sort((a, b) => 
+    new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 };
 
 const PharmacyFinances = () => {
@@ -133,99 +185,14 @@ const PharmacyFinances = () => {
   const [startDate, endDate] = dateRange;
   const [showFilters, setShowFilters] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<PharmacyTransaction | null>(null);
-  const [timeRange, setTimeRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const loadTransactions = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Mock data
-        const mockData = [
-          {
-            _id: '1',
-            pharmacyId: 'PHARM-1001',
-            pharmacyName: 'City Pharmacy',
-            transactionId: 'TXN-20230601-001',
-            date: '2023-06-01T10:30:00Z',
-            amount: 2500,
-            commission: 250,
-            commissionRate: 0.1,
-            paymentMethod: 'Credit Card',
-            status: 'completed',
-            orderId: 'ORD-5001',
-            customerId: 'CUST-1001',
-            items: [
-              { name: 'Pain Relief Tablets', quantity: 2, price: 500 },
-              { name: 'Vitamin C', quantity: 1, price: 1500 }
-            ]
-          },
-          {
-            _id: '2',
-            pharmacyId: 'PHARM-1002',
-            pharmacyName: 'Village Meds',
-            transactionId: 'TXN-20230601-002',
-            date: '2023-06-01T11:15:00Z',
-            amount: 1800,
-            commission: 180,
-            commissionRate: 0.1,
-            paymentMethod: 'Insurance',
-            status: 'completed',
-            orderId: 'ORD-5002',
-            customerId: 'CUST-1002',
-            items: [
-              { name: 'Antibiotic Ointment', quantity: 3, price: 600 }
-            ]
-          },
-          {
-            _id: '3',
-            pharmacyId: 'PHARM-1001',
-            pharmacyName: 'City Pharmacy',
-            transactionId: 'TXN-20230602-001',
-            date: '2023-06-02T09:45:00Z',
-            amount: 3000,
-            commission: 300,
-            commissionRate: 0.1,
-            paymentMethod: 'Debit Card',
-            status: 'pending',
-            orderId: 'ORD-5003',
-            items: [
-              { name: 'Blood Pressure Monitor', quantity: 1, price: 3000 }
-            ]
-          },
-          {
-            _id: '4',
-            pharmacyId: 'PHARM-1003',
-            pharmacyName: '24/7 Meds',
-            transactionId: 'TXN-20230603-001',
-            date: '2023-06-03T14:20:00Z',
-            amount: 2200,
-            commission: 220,
-            commissionRate: 0.1,
-            paymentMethod: 'Insurance',
-            status: 'failed',
-            orderId: 'ORD-5004'
-          },
-          {
-            _id: '5',
-            pharmacyId: 'PHARM-1004',
-            pharmacyName: 'Health Plus',
-            transactionId: 'TXN-20230604-001',
-            date: '2023-06-04T10:00:00Z',
-            amount: 2000,
-            commission: 200,
-            commissionRate: 0.1,
-            paymentMethod: 'Cash',
-            status: 'refunded',
-            orderId: 'ORD-5005',
-            items: [
-              { name: 'Diabetes Test Strips', quantity: 1, price: 2000 }
-            ]
-          }
-        ];
-
-        setTransactions(transformTransactionData(mockData));
+        const data = await fetchPharmacyTransactions();
+        setTransactions(data);
       } catch (err) {
         console.error('Failed to load transactions', err);
         setError('Unable to load transactions. Please try again later.');
@@ -234,7 +201,7 @@ const PharmacyFinances = () => {
       }
     };
 
-    fetchTransactions();
+    loadTransactions();
   }, []);
 
   const handleExport = (type: 'csv' | 'json') => {
@@ -276,22 +243,18 @@ const PharmacyFinances = () => {
   };
 
   const visibleTransactions = transactions.filter((t) => {
-    // Search filter
     const matchesSearch =
       search === '' ||
       t.pharmacyName.toLowerCase().includes(search.toLowerCase()) ||
       t.transactionId.toLowerCase().includes(search.toLowerCase()) ||
       (t.orderId && t.orderId.toLowerCase().includes(search.toLowerCase()));
 
-    // Status filter
     const matchesStatus =
       statusFilter === 'all' || t.status === statusFilter;
 
-    // Pharmacy filter
     const matchesPharmacy =
       pharmacyFilter === 'all' || t.pharmacyId === pharmacyFilter;
 
-    // Date range filter
     const transactionDate = new Date(t.date);
     const matchesDateRange =
       (!startDate || transactionDate >= startDate) &&
@@ -300,15 +263,28 @@ const PharmacyFinances = () => {
     return matchesSearch && matchesStatus && matchesPharmacy && matchesDateRange;
   });
 
-  const pharmacySummaries = calculateSummary(visibleTransactions);
+  const pharmacySummaries = calculatePharmacySummary(visibleTransactions);
   const allPharmacies = Array.from(new Set(transactions.map(t => ({ id: t.pharmacyId, name: t.pharmacyName }))));
   const allStatuses = ['completed', 'pending', 'failed', 'refunded'];
 
   const totalRevenue = visibleTransactions.reduce((sum, t) => sum + t.amount, 0);
   const totalCommission = visibleTransactions.reduce((sum, t) => sum + t.commission, 0);
-
-  // Prepare data for the line chart
   const dailySummaryData = calculateDailySummary(visibleTransactions);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800';
+      case 'pending':
+        return darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800';
+      case 'refunded':
+        return darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800';
+      default:
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
@@ -655,13 +631,7 @@ const PharmacyFinances = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                          transaction.status === 'completed'
-                            ? darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800'
-                            : transaction.status === 'pending'
-                              ? darkMode ? 'bg-yellow-900 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
-                              : transaction.status === 'failed'
-                                ? darkMode ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800'
-                                : darkMode ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-800'
+                          getStatusColor(transaction.status)
                         }`}>
                           {transaction.status}
                         </span>
@@ -821,13 +791,7 @@ const PharmacyFinances = () => {
                       <div className="flex justify-between">
                         <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Status:</span>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                          selectedTransaction.status === 'completed'
-                            ? darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800'
-                            : selectedTransaction.status === 'pending'
-                              ? darkMode ? 'bg-yellow-900 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
-                              : selectedTransaction.status === 'failed'
-                                ? darkMode ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800'
-                                : darkMode ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-800'
+                          getStatusColor(selectedTransaction.status)
                         }`}>
                           {selectedTransaction.status}
                         </span>

@@ -1,3 +1,4 @@
+// app/finance/doctor-transaction.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -9,131 +10,12 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 import { useTheme } from '../../components/ThemeContext';
-
-interface DoctorTransaction {
-  id: string;
-  doctorId: string;
-  doctorName: string;
-  specialization: string;
-  transactionId: string;
-  date: string;
-  consultationFee: number;
-  platformFee: number;
-  platformFeeRate: number;
-  paymentMethod: string;
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
-  appointmentId?: string;
-  patientId?: string;
-  consultationType?: 'video' | 'chat' | 'clinic';
-  duration?: number; // in minutes
-}
-
-interface DoctorSummary {
-  doctorId: string;
-  doctorName: string;
-  specialization: string;
-  totalTransactions: number;
-  totalFees: number;
-  totalPlatformFees: number;
-  lastTransactionDate: string;
-  averageConsultationDuration?: number;
-}
-
-interface DailySummary {
-  date: string;
-  transactions: number;
-  revenue: number;
-  platformFees: number;
-  averageDuration?: number;
-}
-
-const transformTransactionData = (data: any[]): DoctorTransaction[] =>
-  data.map((t) => ({
-    id: t._id || `trans-${Math.random().toString(36).substr(2, 9)}`,
-    doctorId: t.doctorId,
-    doctorName: t.doctorName || 'Dr. Unknown',
-    specialization: t.specialization || 'General Physician',
-    transactionId: t.transactionId || `TXN-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
-    date: t.date || new Date().toISOString(),
-    consultationFee: t.consultationFee || 0,
-    platformFee: t.platformFee || 0,
-    platformFeeRate: t.platformFeeRate || 0.2, // Default 20% platform fee
-    paymentMethod: t.paymentMethod || 'Online',
-    status: t.status?.toLowerCase() || 'completed',
-    appointmentId: t.appointmentId,
-    patientId: t.patientId,
-    consultationType: t.consultationType || 'video',
-    duration: t.duration || 15, // default 15 minutes
-  }));
-
-const calculateSummary = (transactions: DoctorTransaction[]): DoctorSummary[] => {
-  const doctorMap = new Map<string, DoctorSummary>();
-
-  transactions.forEach((t) => {
-    if (!doctorMap.has(t.doctorId)) {
-      doctorMap.set(t.doctorId, {
-        doctorId: t.doctorId,
-        doctorName: t.doctorName,
-        specialization: t.specialization,
-        totalTransactions: 0,
-        totalFees: 0,
-        totalPlatformFees: 0,
-        lastTransactionDate: t.date,
-        averageConsultationDuration: 0,
-      });
-    }
-
-    const summary = doctorMap.get(t.doctorId)!;
-    summary.totalTransactions += 1;
-    summary.totalFees += t.consultationFee;
-    summary.totalPlatformFees += t.platformFee;
-    if (new Date(t.date) > new Date(summary.lastTransactionDate)) {
-      summary.lastTransactionDate = t.date;
-    }
-    
-    // Calculate average duration
-    if (t.duration) {
-      const currentTotalDuration = (summary.averageConsultationDuration || 0) * (summary.totalTransactions - 1);
-      summary.averageConsultationDuration = (currentTotalDuration + t.duration) / summary.totalTransactions;
-    }
-  });
-
-  return Array.from(doctorMap.values());
-};
-
-const calculateDailySummary = (transactions: DoctorTransaction[]): DailySummary[] => {
-  const dailyMap = new Map<string, DailySummary>();
-
-  transactions.forEach((t) => {
-    const date = new Date(t.date).toISOString().split('T')[0];
-    const formattedDate = new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-    if (!dailyMap.has(date)) {
-      dailyMap.set(date, {
-        date: formattedDate,
-        transactions: 0,
-        revenue: 0,
-        platformFees: 0,
-        averageDuration: 0,
-      });
-    }
-
-    const daily = dailyMap.get(date)!;
-    daily.transactions += 1;
-    daily.revenue += t.consultationFee;
-    daily.platformFees += t.platformFee;
-    
-    // Calculate average duration
-    if (t.duration) {
-      const currentTotalDuration = (daily.averageDuration || 0) * (daily.transactions - 1);
-      daily.averageDuration = (currentTotalDuration + t.duration) / daily.transactions;
-    }
-  });
-
-  return Array.from(dailyMap.values()).sort((a, b) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
-};
+import { 
+  fetchDoctorTransactions,
+  calculateDoctorSummary,
+  calculateDailySummary,
+  DoctorTransaction
+} from '@/lib/api/doctor-transactions';
 
 const DoctorTransactions = () => {
   const { darkMode } = useTheme();
@@ -156,114 +38,8 @@ const DoctorTransactions = () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Mock data for doctors
-        const mockDoctorTransactions: DoctorTransaction[] = [
-          {
-            id: '1',
-            doctorId: 'doc-001',
-            doctorName: 'Dr. Sarah Johnson',
-            specialization: 'Cardiology',
-            transactionId: 'TXN-DOC-001',
-            date: new Date(Date.now() - 86400000).toISOString(),
-            consultationFee: 1500,
-            platformFee: 300,
-            platformFeeRate: 0.2,
-            paymentMethod: 'Online',
-            status: 'completed',
-            appointmentId: 'APT-001',
-            patientId: 'PAT-001',
-            consultationType: 'video',
-            duration: 30
-          },
-          {
-            id: '2',
-            doctorId: 'doc-002',
-            doctorName: 'Dr. Michael Chen',
-            specialization: 'Pediatrics',
-            transactionId: 'TXN-DOC-002',
-            date: new Date(Date.now() - 172800000).toISOString(),
-            consultationFee: 1200,
-            platformFee: 240,
-            platformFeeRate: 0.2,
-            paymentMethod: 'Online',
-            status: 'completed',
-            appointmentId: 'APT-002',
-            patientId: 'PAT-002',
-            consultationType: 'chat',
-            duration: 20
-          },
-          {
-            id: '3',
-            doctorId: 'doc-003',
-            doctorName: 'Dr. Emily Wilson',
-            specialization: 'Dermatology',
-            transactionId: 'TXN-DOC-003',
-            date: new Date(Date.now() - 259200000).toISOString(),
-            consultationFee: 1800,
-            platformFee: 360,
-            platformFeeRate: 0.2,
-            paymentMethod: 'Credit Card',
-            status: 'pending',
-            appointmentId: 'APT-003',
-            patientId: 'PAT-003',
-            consultationType: 'clinic',
-            duration: 45
-          },
-          {
-            id: '4',
-            doctorId: 'doc-001',
-            doctorName: 'Dr. Sarah Johnson',
-            specialization: 'Cardiology',
-            transactionId: 'TXN-DOC-004',
-            date: new Date(Date.now() - 345600000).toISOString(),
-            consultationFee: 1500,
-            platformFee: 300,
-            platformFeeRate: 0.2,
-            paymentMethod: 'Online',
-            status: 'completed',
-            appointmentId: 'APT-004',
-            patientId: 'PAT-004',
-            consultationType: 'video',
-            duration: 25
-          },
-          {
-            id: '5',
-            doctorId: 'doc-004',
-            doctorName: 'Dr. Robert Kim',
-            specialization: 'Neurology',
-            transactionId: 'TXN-DOC-005',
-            date: new Date(Date.now() - 432000000).toISOString(),
-            consultationFee: 2000,
-            platformFee: 400,
-            platformFeeRate: 0.2,
-            paymentMethod: 'Debit Card',
-            status: 'failed',
-            appointmentId: 'APT-005',
-            patientId: 'PAT-005',
-            consultationType: 'video',
-            duration: 30
-          },
-          {
-            id: '6',
-            doctorId: 'doc-002',
-            doctorName: 'Dr. Michael Chen',
-            specialization: 'Pediatrics',
-            transactionId: 'TXN-DOC-006',
-            date: new Date(Date.now() - 518400000).toISOString(),
-            consultationFee: 1000,
-            platformFee: 200,
-            platformFeeRate: 0.2,
-            paymentMethod: 'Online',
-            status: 'refunded',
-            appointmentId: 'APT-006',
-            patientId: 'PAT-006',
-            consultationType: 'chat',
-            duration: 15
-          },
-        ];
-
-        setTransactions(mockDoctorTransactions);
+        const data = await fetchDoctorTransactions();
+        setTransactions(data);
       } catch (err) {
         console.error('Failed to load transactions', err);
         setError('Unable to load transactions. Please try again later.');
@@ -349,7 +125,7 @@ const DoctorTransactions = () => {
     return matchesSearch && matchesStatus && matchesDoctor && matchesSpecialization && matchesConsultationType && matchesDateRange;
   });
 
-  const doctorSummaries = calculateSummary(visibleTransactions);
+  const doctorSummaries = calculateDoctorSummary(visibleTransactions);
   const allDoctors = Array.from(new Set(transactions.map(t => ({ id: t.doctorId, name: t.doctorName }))));
   const allSpecializations = Array.from(new Set(transactions.map(t => t.specialization)));
   const allStatuses = ['completed', 'pending', 'failed', 'refunded'];

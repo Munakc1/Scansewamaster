@@ -1,26 +1,34 @@
 import axios from "axios";
 
+const apiClient = axios.create({
+  baseURL: "https://api.caresewa.in/api",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 export async function fetchWithFallback<T>(
   primaryUrl: string,
   fallbackKey: string,
-  timeout = 5000
+  config?: any
 ): Promise<T> {
   try {
-    const res = await axios.get<T>(primaryUrl, { timeout });
+    const res = await apiClient(primaryUrl, config);
     return res.data;
   } catch (error) {
     console.warn(`[Fallback Triggered]: ${error}`);
-
+    
     try {
       const fallbackRes = await axios.get("/mock/data.json");
       const allMockData = fallbackRes.data;
-
-      // Support nested fallback keys like "aboutUs.timelineData"
-      const keys = fallbackKey.split(".");
-      const fallbackData = keys.reduce((obj, key) => obj?.[key], allMockData);
+      
+      const fallbackData = fallbackKey
+        ? fallbackKey.split(".").reduce((obj, key) => obj?.[key], allMockData)
+        : allMockData;
 
       if (fallbackData === undefined) {
-        throw new Error(`Fallback key "${fallbackKey}" not found in mock data`);
+        throw new Error(`Fallback key "${fallbackKey}" not found`);
       }
 
       return fallbackData;
@@ -30,3 +38,5 @@ export async function fetchWithFallback<T>(
     }
   }
 }
+
+export default apiClient;

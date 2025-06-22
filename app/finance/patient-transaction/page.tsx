@@ -3,33 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { FaFilter, FaFileInvoiceDollar, FaSearch, FaRegCalendarAlt, FaUserInjured } from 'react-icons/fa';
-import { MdDownload, MdFilterList, MdOutlineAttachMoney, MdHealthAndSafety } from 'react-icons/md';
+import { FaFilter, FaFileInvoiceDollar, FaSearch, FaRegCalendarAlt, FaUserInjured, FaEye, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { MdDownload, MdFilterList, MdOutlineAttachMoney, MdHealthAndSafety, MdAdd } from 'react-icons/md';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 import { useTheme } from '../../components/ThemeContext';
-
-interface PatientTransaction {
-  id: string;
-  patientId: string;
-  patientName: string;
-  transactionId: string;
-  date: string;
-  amount: number;
-  serviceType: string;
-  serviceDetails: string;
-  paymentMethod: string;
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
-  prescriptionId?: string;
-  doctorId?: string;
-  items?: {
-    name: string;
-    type: 'medicine' | 'consultation' | 'test' | 'procedure';
-    quantity: number;
-    price: number;
-  }[];
-}
+import { 
+  fetchPatientTransactions,
+  PatientTransaction,
+  transformTransactionData
+} from '@/lib/api/patient-transactions';
 
 interface PatientSummary {
   patientId: string;
@@ -47,34 +31,11 @@ interface DailySummary {
   averageAmount: number;
 }
 
-const transformTransactionData = (data: any[]): PatientTransaction[] =>
-  data.map((t) => ({
-    id: t._id || `trans-${Math.random().toString(36).substr(2, 9)}`,
-    patientId: t.patientId,
-    patientName: t.patientName || 'Unknown Patient',
-    transactionId: t.transactionId || `TXN-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
-    date: t.date || new Date().toISOString(),
-    amount: t.amount || 0,
-    serviceType: t.serviceType || 'Consultation',
-    serviceDetails: t.serviceDetails || 'General Consultation',
-    paymentMethod: t.paymentMethod || 'Online',
-    status: t.status?.toLowerCase() || 'completed',
-    prescriptionId: t.prescriptionId,
-    doctorId: t.doctorId,
-    items: t.items?.map((i: any) => ({
-      name: i.name || 'Unknown Service',
-      type: i.type || 'consultation',
-      quantity: i.quantity || 1,
-      price: i.price || 0,
-    })) || [],
-  }));
-
 const calculateSummary = (transactions: PatientTransaction[]): PatientSummary[] => {
   const patientMap = new Map<string, PatientSummary>();
   const serviceCountMap = new Map<string, Map<string, number>>();
 
   transactions.forEach((t) => {
-    // Update patient summary
     if (!patientMap.has(t.patientId)) {
       patientMap.set(t.patientId, {
         patientId: t.patientId,
@@ -93,7 +54,6 @@ const calculateSummary = (transactions: PatientTransaction[]): PatientSummary[] 
       summary.lastTransactionDate = t.date;
     }
 
-    // Update service count for this patient
     if (!serviceCountMap.has(t.patientId)) {
       serviceCountMap.set(t.patientId, new Map<string, number>());
     }
@@ -101,7 +61,6 @@ const calculateSummary = (transactions: PatientTransaction[]): PatientSummary[] 
     patientServices.set(t.serviceType, (patientServices.get(t.serviceType) || 0 + 1));
   });
 
-  // Determine most common service for each patient
   serviceCountMap.forEach((services, patientId) => {
     let maxCount = 0;
     let mostCommon = '';
@@ -160,122 +119,12 @@ const PatientTransactions = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<PatientTransaction | null>(null);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const loadTransactions = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Mock patient transaction data
-        const mockData = [
-          {
-            _id: '1',
-            patientId: 'PAT-1001',
-            patientName: 'John Doe',
-            transactionId: 'TXN-20230601-001',
-            date: '2023-06-01T10:30:00Z',
-            amount: 1500,
-            serviceType: 'Consultation',
-            serviceDetails: 'Cardiology Consultation',
-            paymentMethod: 'Credit Card',
-            status: 'completed',
-            prescriptionId: 'RX-1001',
-            doctorId: 'DOC-2001',
-            items: [
-              { name: 'Cardiology Consultation', type: 'consultation', quantity: 1, price: 1500 }
-            ]
-          },
-          {
-            _id: '2',
-            patientId: 'PAT-1002',
-            patientName: 'Jane Smith',
-            transactionId: 'TXN-20230601-002',
-            date: '2023-06-01T11:15:00Z',
-            amount: 2500,
-            serviceType: 'Lab Test',
-            serviceDetails: 'Complete Blood Count',
-            paymentMethod: 'Insurance',
-            status: 'completed',
-            doctorId: 'DOC-2002',
-            items: [
-              { name: 'Complete Blood Count', type: 'test', quantity: 1, price: 1200 },
-              { name: 'Urine Analysis', type: 'test', quantity: 1, price: 800 },
-              { name: 'Doctor Fee', type: 'consultation', quantity: 1, price: 500 }
-            ]
-          },
-          {
-            _id: '3',
-            patientId: 'PAT-1001',
-            patientName: 'John Doe',
-            transactionId: 'TXN-20230602-001',
-            date: '2023-06-02T09:45:00Z',
-            amount: 1800,
-            serviceType: 'Pharmacy',
-            serviceDetails: 'Medication Purchase',
-            paymentMethod: 'Debit Card',
-            status: 'completed',
-            prescriptionId: 'RX-1001',
-            items: [
-              { name: 'Atorvastatin 20mg', type: 'medicine', quantity: 30, price: 450 },
-              { name: 'Metformin 500mg', type: 'medicine', quantity: 60, price: 300 },
-              { name: 'Lisinopril 10mg', type: 'medicine', quantity: 30, price: 250 },
-              { name: 'Dispensing Fee', type: 'service', quantity: 1, price: 800 }
-            ]
-          },
-          {
-            _id: '4',
-            patientId: 'PAT-1003',
-            patientName: 'Robert Johnson',
-            transactionId: 'TXN-20230603-001',
-            date: '2023-06-03T14:20:00Z',
-            amount: 5000,
-            serviceType: 'Procedure',
-            serviceDetails: 'Minor Surgery',
-            paymentMethod: 'Insurance',
-            status: 'pending',
-            doctorId: 'DOC-2003'
-          },
-          {
-            _id: '5',
-            patientId: 'PAT-1004',
-            patientName: 'Emily Davis',
-            transactionId: 'TXN-20230604-001',
-            date: '2023-06-04T10:00:00Z',
-            amount: 1200,
-            serviceType: 'Consultation',
-            serviceDetails: 'Pediatric Checkup',
-            paymentMethod: 'Cash',
-            status: 'completed',
-            doctorId: 'DOC-2004'
-          },
-          {
-            _id: '6',
-            patientId: 'PAT-1002',
-            patientName: 'Jane Smith',
-            transactionId: 'TXN-20230605-001',
-            date: '2023-06-05T13:45:00Z',
-            amount: 3200,
-            serviceType: 'Lab Test',
-            serviceDetails: 'Comprehensive Metabolic Panel',
-            paymentMethod: 'Credit Card',
-            status: 'failed',
-            doctorId: 'DOC-2002'
-          },
-          {
-            _id: '7',
-            patientId: 'PAT-1005',
-            patientName: 'Michael Wilson',
-            transactionId: 'TXN-20230606-001',
-            date: '2023-06-06T16:30:00Z',
-            amount: 750,
-            serviceType: 'Consultation',
-            serviceDetails: 'Follow-up Visit',
-            paymentMethod: 'Online Payment',
-            status: 'refunded',
-            doctorId: 'DOC-2005'
-          }
-        ];
-
-        setTransactions(transformTransactionData(mockData));
+        const data = await fetchPatientTransactions();
+        setTransactions(data);
       } catch (err) {
         console.error('Failed to load transactions', err);
         setError('Unable to load transactions. Please try again later.');
@@ -284,7 +133,7 @@ const PatientTransactions = () => {
       }
     };
 
-    fetchTransactions();
+    loadTransactions();
   }, []);
 
   const handleExport = (type: 'csv' | 'json') => {
@@ -325,26 +174,21 @@ const PatientTransactions = () => {
   };
 
   const visibleTransactions = transactions.filter((t) => {
-    // Search filter
     const matchesSearch =
       search === '' ||
       t.patientName.toLowerCase().includes(search.toLowerCase()) ||
       t.transactionId.toLowerCase().includes(search.toLowerCase()) ||
       (t.prescriptionId && t.prescriptionId.toLowerCase().includes(search.toLowerCase()));
 
-    // Status filter
     const matchesStatus =
       statusFilter === 'all' || t.status === statusFilter;
 
-    // Patient filter
     const matchesPatient =
       patientFilter === 'all' || t.patientId === patientFilter;
 
-    // Service filter
     const matchesService =
       serviceFilter === 'all' || t.serviceType.toLowerCase() === serviceFilter.toLowerCase();
 
-    // Date range filter
     const transactionDate = new Date(t.date);
     const matchesDateRange =
       (!startDate || transactionDate >= startDate) &&
@@ -360,9 +204,22 @@ const PatientTransactions = () => {
 
   const totalRevenue = visibleTransactions.reduce((sum, t) => sum + t.amount, 0);
   const totalTransactions = visibleTransactions.length;
-
-  // Prepare data for the line chart
   const dailySummaryData = calculateDailySummary(visibleTransactions);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800';
+      case 'pending':
+        return darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800';
+      case 'refunded':
+        return darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800';
+      default:
+        return darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
@@ -591,7 +448,7 @@ const PatientTransactions = () => {
           </div>
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${darkMode ? 'border-blue-500' : 'border-blue-600'} mx-auto`}></div>
               <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading transactions...</p>
             </div>
           ) : error ? (
@@ -656,14 +513,7 @@ const PatientTransactions = () => {
                         {transaction.paymentMethod}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${transaction.status === 'completed'
-                            ? darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
-                            : transaction.status === 'pending'
-                              ? darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800'
-                              : transaction.status === 'failed'
-                                ? darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
-                                : darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
-                          }`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(transaction.status)}`}>
                           {transaction.status}
                         </span>
                       </td>
@@ -788,71 +638,66 @@ const PatientTransactions = () => {
                 <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transaction Details</h2>
                 <button
                   onClick={() => setSelectedTransaction(null)}
-                  className={darkMode ? 'text-gray-400 hover:text-gray-300 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
+                  className={darkMode ? 'text-gray-400 hover:text-gray-200 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <FaTimes />
                 </button>
               </div>
-
+              
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className={`text-lg font-medium mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transaction Information</h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Transaction ID:</span>
-                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedTransaction.transactionId}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Date:</span>
-                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                          {new Date(selectedTransaction.date).toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Status:</span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${selectedTransaction.status === 'completed'
-                            ? darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
-                            : selectedTransaction.status === 'pending'
-                              ? darkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800'
-                              : selectedTransaction.status === 'failed'
-                                ? darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
-                                : darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
-                          }`}>
-                          {selectedTransaction.status}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Payment Method:</span>
-                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                          {selectedTransaction.paymentMethod}
-                        </span>
+                    <div className={`p-4 rounded-md ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Transaction ID:</span>
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedTransaction.transactionId}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Date:</span>
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {new Date(selectedTransaction.date).toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Status:</span>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedTransaction.status)}`}>
+                            {selectedTransaction.status}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Payment Method:</span>
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {selectedTransaction.paymentMethod}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div>
                     <h3 className={`text-lg font-medium mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Financial Details</h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Total Amount:</span>
-                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                          ₹{selectedTransaction.amount.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Service Type:</span>
-                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                          {selectedTransaction.serviceType}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Service Details:</span>
-                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                          {selectedTransaction.serviceDetails}
-                        </span>
+                    <div className={`p-4 rounded-md ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Total Amount:</span>
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            ₹{selectedTransaction.amount.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Service Type:</span>
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {selectedTransaction.serviceType}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Service Details:</span>
+                          <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {selectedTransaction.serviceDetails}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>

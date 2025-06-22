@@ -9,29 +9,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, PieChart, Pie, Cell } from 'recharts';
 import { useTheme } from '../../components/ThemeContext';
-
-interface RevenueData {
-  date: string;
-  totalRevenue: number;
-  nurseRevenue: number;
-  patientRevenue: number;
-  pharmacyRevenue: number;
-  doctorRevenue: number;
-}
-
-interface RevenueByCategory {
-  name: string;
-  value: number;
-  color: string;
-}
-
-interface RevenueSummary {
-  totalRevenue: number;
-  totalTransactions: number;
-  averageTransaction: number;
-  revenueByCategory: RevenueByCategory[];
-  revenueTrend: RevenueData[];
-}
+import { fetchRevenueSummary, fetchRevenueTrend, RevenueSummary, RevenueData, RevenueByCategory, transformRevenueData } from '@/lib/api/revenue-tracker';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -45,34 +23,28 @@ const RevenueTracker = () => {
   const [timeRange, setTimeRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
 
   useEffect(() => {
-    const fetchRevenueData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Mock data - in a real app, you would fetch this from your API
-        const mockRevenueData: RevenueSummary = {
-          totalRevenue: 458900,
-          totalTransactions: 1243,
-          averageTransaction: 369.2,
-          revenueByCategory: [
-            { name: 'Doctors', value: 185600, color: COLORS[0] },
-            { name: 'Patients', value: 124300, color: COLORS[1] },
-            { name: 'Nurses', value: 87600, color: COLORS[2] },
-            { name: 'Pharmacy', value: 61400, color: COLORS[3] },
-          ],
-          revenueTrend: [
-            { date: 'Jan 1', totalRevenue: 12000, nurseRevenue: 2500, patientRevenue: 3500, pharmacyRevenue: 2000, doctorRevenue: 4000 },
-            { date: 'Jan 2', totalRevenue: 19000, nurseRevenue: 4000, patientRevenue: 5000, pharmacyRevenue: 3000, doctorRevenue: 7000 },
-            { date: 'Jan 3', totalRevenue: 15000, nurseRevenue: 3000, patientRevenue: 4000, pharmacyRevenue: 2500, doctorRevenue: 5500 },
-            { date: 'Jan 4', totalRevenue: 22000, nurseRevenue: 4500, patientRevenue: 6000, pharmacyRevenue: 3500, doctorRevenue: 8000 },
-            { date: 'Jan 5', totalRevenue: 18000, nurseRevenue: 3500, patientRevenue: 4500, pharmacyRevenue: 3000, doctorRevenue: 7000 },
-            { date: 'Jan 6', totalRevenue: 25000, nurseRevenue: 5000, patientRevenue: 7000, pharmacyRevenue: 4000, doctorRevenue: 9000 },
-            { date: 'Jan 7', totalRevenue: 21000, nurseRevenue: 4500, patientRevenue: 5500, pharmacyRevenue: 3500, doctorRevenue: 7500 },
-          ],
-        };
-
-        setRevenueData(mockRevenueData);
+        
+        // Fetch summary data
+        const summaryData = await fetchRevenueSummary();
+        setRevenueData(transformRevenueData(summaryData));
+        
+        // Fetch trend data with filters if date range is selected
+        if (startDate && endDate) {
+          const trendData = await fetchRevenueTrend({
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            interval: timeRange
+          });
+          
+          setRevenueData(prev => ({
+            ...prev!,
+            revenueTrend: trendData
+          }));
+        }
       } catch (err) {
         console.error('Failed to load revenue data', err);
         setError('Unable to load revenue data. Please try again later.');
@@ -81,8 +53,8 @@ const RevenueTracker = () => {
       }
     };
 
-    fetchRevenueData();
-  }, []);
+    fetchData();
+  }, [startDate, endDate, timeRange]);
 
   const handleExport = (type: 'csv' | 'json') => {
     if (!revenueData) return;
@@ -285,7 +257,7 @@ const RevenueTracker = () => {
                     label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {revenueData.revenueByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip 

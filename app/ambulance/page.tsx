@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { FaAmbulance, FaSearch, FaFilter, FaFileUpload, FaFileDownload, FaTimes, FaEdit, FaTrash, FaEye, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaAmbulance, FaSearch, FaFileUpload, FaFileDownload, FaTimes, FaEdit, FaTrash, FaEye, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
+import { cn } from '@/lib/utils';
 import { useTheme } from '../components/ThemeContext';
 
 interface Ambulance {
@@ -22,59 +23,14 @@ interface Ambulance {
   equipment: string[];
 }
 
-const dummyAmbulances: Ambulance[] = [
-  {
-    id: 'AMB-1001',
-    vehicleNumber: 'MH02AB1234',
-    driverName: 'Rajesh Kumar',
-    driverContact: '+919876543210',
-    vehicleType: 'Advanced',
-    status: 'available',
-    currentLocation: 'Main Hospital',
-    lastMaintenanceDate: '2024-02-15',
-    nextMaintenanceDate: '2024-05-15',
-    insuranceExpiry: '2024-12-31',
-    baseStation: 'Central Station',
-    equipment: ['Oxygen', 'Defibrillator', 'Stretcher', 'First Aid Kit']
-  },
-  {
-    id: 'AMB-1002',
-    vehicleNumber: 'MH02CD5678',
-    driverName: 'Vikram Singh',
-    driverContact: '+919876543211',
-    vehicleType: 'Mobile ICU',
-    status: 'on-call',
-    currentLocation: 'En route to patient',
-    lastMaintenanceDate: '2024-01-20',
-    nextMaintenanceDate: '2024-04-20',
-    insuranceExpiry: '2024-11-30',
-    baseStation: 'North Station',
-    equipment: ['Ventilator', 'Monitor', 'IV Pump', 'Oxygen', 'Defibrillator']
-  },
-  {
-    id: 'AMB-1003',
-    vehicleNumber: 'MH02EF9012',
-    driverName: 'Anil Sharma',
-    driverContact: '+919876543212',
-    vehicleType: 'Basic',
-    status: 'maintenance',
-    currentLocation: 'Service Center',
-    lastMaintenanceDate: '2024-03-01',
-    nextMaintenanceDate: '2024-06-01',
-    insuranceExpiry: '2025-01-31',
-    baseStation: 'South Station',
-    equipment: ['Stretcher', 'First Aid Kit', 'Oxygen']
-  }
-];
-
 const AmbulanceManagement = () => {
   const { darkMode } = useTheme();
-  const [ambulances, setAmbulances] = useState<Ambulance[]>(dummyAmbulances);
-  const [loading, setLoading] = useState(false);
+  const [ambulances, setAmbulances] = useState<Ambulance[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showAmbulanceDetails, setShowAmbulanceDetails] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedAmbulance, setSelectedAmbulance] = useState<Ambulance | null>(null);
@@ -82,7 +38,7 @@ const AmbulanceManagement = () => {
     vehicleNumber: '',
     driverName: '',
     driverContact: '',
-    vehicleType: 'Basic',
+    vehicleType: 'Basic' as 'Basic' | 'Advanced' | 'Mobile ICU',
     currentLocation: '',
     baseStation: '',
     lastMaintenanceDate: '',
@@ -90,6 +46,25 @@ const AmbulanceManagement = () => {
     insuranceExpiry: '',
     equipment: ''
   });
+
+  useEffect(() => {
+    const fetchAmbulances = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/mock/data.json');
+        const data = await response.json();
+        setAmbulances(data.ambulances);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load ambulance data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAmbulances();
+  }, []);
 
   const handleExport = (type: 'csv' | 'json') => {
     const dataToExport = visibleAmbulances.map(amb => ({
@@ -167,41 +142,46 @@ const AmbulanceManagement = () => {
     setShowAmbulanceDetails(true);
   };
 
-  const handleAddAmbulance = () => {
+  const handleAddAmbulance = async () => {
     if (!formData.vehicleNumber.trim()) {
       alert('Please enter vehicle number');
       return;
     }
     
-    const newAmbulance: Ambulance = {
-      id: `AMB-${Math.floor(1000 + Math.random() * 9000)}`,
-      vehicleNumber: formData.vehicleNumber,
-      driverName: formData.driverName,
-      driverContact: formData.driverContact,
-      vehicleType: formData.vehicleType as 'Basic' | 'Advanced' | 'Mobile ICU',
-      status: 'available',
-      currentLocation: formData.currentLocation,
-      lastMaintenanceDate: formData.lastMaintenanceDate,
-      nextMaintenanceDate: formData.nextMaintenanceDate,
-      insuranceExpiry: formData.insuranceExpiry,
-      baseStation: formData.baseStation,
-      equipment: formData.equipment.split(',').map(item => item.trim()).filter(item => item)
-    };
-    
-    setAmbulances([...ambulances, newAmbulance]);
-    setFormData({
-      vehicleNumber: '',
-      driverName: '',
-      driverContact: '',
-      vehicleType: 'Basic',
-      currentLocation: '',
-      baseStation: '',
-      lastMaintenanceDate: '',
-      nextMaintenanceDate: '',
-      insuranceExpiry: '',
-      equipment: ''
-    });
-    setShowAddForm(false);
+    try {
+      const newAmbulance: Ambulance = {
+        id: `AMB-${1000 + ambulances.length + 1}`,
+        vehicleNumber: formData.vehicleNumber,
+        driverName: formData.driverName,
+        driverContact: formData.driverContact,
+        vehicleType: formData.vehicleType,
+        status: 'available',
+        currentLocation: formData.currentLocation,
+        lastMaintenanceDate: formData.lastMaintenanceDate,
+        nextMaintenanceDate: formData.nextMaintenanceDate,
+        insuranceExpiry: formData.insuranceExpiry,
+        baseStation: formData.baseStation,
+        equipment: formData.equipment.split(',').map(item => item.trim()).filter(item => item)
+      };
+      
+      setAmbulances([...ambulances, newAmbulance]);
+      setFormData({
+        vehicleNumber: '',
+        driverName: '',
+        driverContact: '',
+        vehicleType: 'Basic',
+        currentLocation: '',
+        baseStation: '',
+        lastMaintenanceDate: '',
+        nextMaintenanceDate: '',
+        insuranceExpiry: '',
+        equipment: ''
+      });
+      setShowAddForm(false);
+    } catch (err) {
+      console.error('Failed to add ambulance:', err);
+      alert('Failed to add ambulance');
+    }
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -212,25 +192,44 @@ const AmbulanceManagement = () => {
     });
   };
 
-  const handleDeleteAmbulance = (ambulanceId: string) => {
+  const handleDeleteAmbulance = async (ambulanceId: string) => {
     if (confirm('Are you sure you want to delete this ambulance?')) {
-      setAmbulances(ambulances.filter(amb => amb.id !== ambulanceId));
+      try {
+        setAmbulances(ambulances.filter(amb => amb.id !== ambulanceId));
+      } catch (err) {
+        console.error('Failed to delete ambulance:', err);
+        alert('Failed to delete ambulance');
+      }
     }
   };
 
   const handleEditAmbulance = (ambulance: Ambulance) => {
     setSelectedAmbulance(ambulance);
-    alert(`Edit functionality would open for ambulance ${ambulance.id}`);
+    setFormData({
+      vehicleNumber: ambulance.vehicleNumber,
+      driverName: ambulance.driverName,
+      driverContact: ambulance.driverContact,
+      vehicleType: ambulance.vehicleType,
+      currentLocation: ambulance.currentLocation,
+      baseStation: ambulance.baseStation,
+      lastMaintenanceDate: ambulance.lastMaintenanceDate,
+      nextMaintenanceDate: ambulance.nextMaintenanceDate,
+      insuranceExpiry: ambulance.insuranceExpiry,
+      equipment: ambulance.equipment.join(', ')
+    });
+    setShowAddForm(true);
   };
 
-  const updateStatus = (ambulanceId: string, newStatus: 'available' | 'on-call' | 'maintenance') => {
-    setAmbulances(ambulances.map(amb => 
-      amb.id === ambulanceId ? { 
-        ...amb, 
-        status: newStatus
-      } : amb
-    ));
-    setShowAmbulanceDetails(false);
+  const updateStatus = async (ambulanceId: string, newStatus: 'available' | 'on-call' | 'maintenance') => {
+    try {
+      setAmbulances(ambulances.map(amb => 
+        amb.id === ambulanceId ? { ...amb, status: newStatus } : amb
+      ));
+      setShowAmbulanceDetails(false);
+    } catch (err) {
+      console.error('Failed to update status:', err);
+      alert('Failed to update status');
+    }
   };
 
   const visibleAmbulances = ambulances.filter((amb) => {
@@ -265,17 +264,19 @@ const AmbulanceManagement = () => {
     }
   };
 
-  const getInputClasses = () => {
-    return darkMode 
+  const getInputClasses = () => cn(
+    'rounded-md px-3 py-2 text-sm focus:outline-none',
+    darkMode 
       ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-blue-500' 
-      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
-  };
+      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+  );
 
-  const getSelectClasses = () => {
-    return darkMode 
+  const getSelectClasses = () => cn(
+    'rounded-md px-3 py-2 text-sm focus:outline-none',
+    darkMode 
       ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500 focus:ring-blue-500' 
-      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
-  };
+      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+  );
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
@@ -712,7 +713,7 @@ const AmbulanceManagement = () => {
         </div>
       )}
 
-      {/* Add Ambulance Modal */}
+      {/* Add/Edit Ambulance Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
           <div className={`rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto ${
@@ -722,9 +723,14 @@ const AmbulanceManagement = () => {
               <div className="flex justify-between items-center mb-6">
                 <h2 className={`text-xl font-semibold ${
                   darkMode ? 'text-white' : 'text-gray-900'
-                }`}>Add New Ambulance</h2>
+                }`}>
+                  {selectedAmbulance ? 'Edit Ambulance' : 'Add New Ambulance'}
+                </h2>
                 <button
-                  onClick={() => setShowAddForm(false)}
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setSelectedAmbulance(null);
+                  }}
                   className={darkMode ? 'text-gray-400 hover:text-gray-200 p-1' : 'text-gray-400 hover:text-gray-600 p-1'}
                 >
                   <FaTimes />
@@ -788,6 +794,7 @@ const AmbulanceManagement = () => {
                     Vehicle Type *
                   </label>
                   <select
+                   
                     name="vehicleType"
                     value={formData.vehicleType}
                     onChange={handleFormChange}
@@ -894,7 +901,10 @@ const AmbulanceManagement = () => {
 
                 <div className="flex gap-3 pt-4">
                   <Button
-                    onClick={() => setShowAddForm(false)}
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setSelectedAmbulance(null);
+                    }}
                     variant="outline"
                     className="flex-1"
                   >
@@ -904,7 +914,7 @@ const AmbulanceManagement = () => {
                     onClick={handleAddAmbulance}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    Add Ambulance
+                    {selectedAmbulance ? 'Update Ambulance' : 'Add Ambulance'}
                   </Button>
                 </div>
               </div>
