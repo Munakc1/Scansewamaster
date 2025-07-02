@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import anime from 'animejs';
+import anime from 'animejs'; // ✅ Correct import for default export
+
 
 export default function LoginPage() {
   const router = useRouter();
