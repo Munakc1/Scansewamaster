@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { FaFileMedical, FaSearch, FaFilter, FaFileUpload, FaFileDownload, FaTimes } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
 import { useTheme } from '../components/ThemeContext';
-import { fetchOrders, updateOrderStatus as apiUpdateOrderStatus, Order } from '@/lib/api/orders';
+import { fetchOrders, updateOrderStatus as apiUpdateOrderStatus, Order } from '../api/orders';
 
 const OrderManagement = () => {
   const { darkMode } = useTheme();
