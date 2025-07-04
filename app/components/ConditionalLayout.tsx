@@ -7,14 +7,26 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
   const pathname = usePathname();
 
   // Define routes where the navbar should NOT be shown
-  const excludedRoutes = ['/login', '/register', '/auth'];
+  const excludedRoutes = [
+    '/',               // Home page
+    '/login',          // Login page
+    '/register',       // Registration page
+    '/auth',           // Authentication routes
+    '/forgot-password' // Password recovery
+  ];
 
-  const showNavbar = !excludedRoutes.includes(pathname);
+  // Check if current route should hide navbar
+  const hideNavbar = excludedRoutes.some(route => 
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
 
-  if (!showNavbar) {
-    return <>{children}</>; // Just render children, no navbar
-  }
-
-  // Wrap children inside MasterDashNavbar
-  return <MasterDashNavbar>{children}</MasterDashNavbar>;
+  return hideNavbar ? (
+    <>{children}</>
+  ) : (
+    <MasterDashNavbar>
+      <div className="flex-1 overflow-auto p-4 md:p-6">
+        {children}
+      </div>
+    </MasterDashNavbar>
+  );
 }
