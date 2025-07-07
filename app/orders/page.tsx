@@ -501,7 +501,7 @@ const OrderManagement = () => {
                     Order Items
                   </h3>
                   <div className="space-y-2">
-                    {selectedOrder.items.map((item, index) => (
+                    {selectedOrder.items.map((item: ItemType, index: number) => (
                       <div key={index} className={`border rounded-md p-3 ${
                         darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                       }`}>

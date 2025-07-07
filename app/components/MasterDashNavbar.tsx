@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleSidebar}
-            className={`p-2 rounded transition ${darkMode ? 'hover:bg-orange-900' : 'hover:bg-orange-100'}`}
+            className={`p-2 cursor-pointer rounded transition ${darkMode ? 'hover:bg-orange-900' : 'hover:bg-orange-100'}`}
           >
             <Menu className={darkMode ? 'text-orange-400' : 'text-black'} />
           </button>
