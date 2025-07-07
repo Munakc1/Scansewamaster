@@ -22,6 +22,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
+  const [accountAnchor, setAccountAnchor] = useState<null | HTMLElement>(null); // New state for account popover
 
   const NAVBAR_HEIGHT = 64;
 
@@ -39,6 +40,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
   const handleNotifOpen = (event: React.MouseEvent<HTMLElement>) => setNotifAnchor(event.currentTarget);
   const handleNotifClose = () => setNotifAnchor(null);
+  const handleAccountOpen = (event: React.MouseEvent<HTMLElement>) => setAccountAnchor(event.currentTarget); // New handler
+  const handleAccountClose = () => setAccountAnchor(null); // New handler
 
   return (
     <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-gray-900 text-orange-50' : 'bg-white text-gray-900'}`}>
@@ -88,7 +91,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </Tooltip>
 
           <Tooltip title="Admin Profile">
-            <IconButton>
+            <IconButton onClick={handleAccountOpen}>
               <AccountCircle className={darkMode ? 'text-orange-400' : 'text-black'} />
             </IconButton>
           </Tooltip>
@@ -123,8 +126,60 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </button>
           </div>
         </Popover>
+
+        {/* Account Popover - New addition */}
+        <Popover
+          open={Boolean(accountAnchor)}
+          anchorEl={accountAnchor}
+          onClose={handleAccountClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <div className={`p-4 w-64 ${darkMode ? 'bg-gray-900 border border-orange-800' : 'bg-white border border-orange-200'}`}>
+            <div className="flex items-center space-x-3 mb-4">
+              <AccountCircle className={darkMode ? 'text-orange-400 text-4xl' : 'text-black text-4xl'} />
+              <div>
+                <Typography variant="subtitle1" className={`font-bold ${darkMode ? 'text-orange-100' : 'text-black'}`}>
+                  Admin User
+                </Typography>
+                <Typography variant="body2" className={darkMode ? 'text-orange-300' : 'text-gray-600'}>
+                  admin@scansewa.com
+                </Typography>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Link href="/profile" passHref>
+                <ListItemButton 
+                  className={`${darkMode ? 'hover:bg-orange-900 text-orange-100' : 'hover:bg-orange-50 text-black'}`}
+                  onClick={handleAccountClose}
+                >
+                  <ListItemText primary="Profile Settings" />
+                </ListItemButton>
+              </Link>
+              <Link href="/settings" passHref>
+                <ListItemButton 
+                  className={`${darkMode ? 'hover:bg-orange-900 text-orange-100' : 'hover:bg-orange-50 text-black'}`}
+                  onClick={handleAccountClose}
+                >
+                  <ListItemText primary="Account Settings" />
+                </ListItemButton>
+              </Link>
+              <div className="border-t border-orange-700 my-2"></div>
+              <ListItemButton 
+                className={`${darkMode ? 'hover:bg-orange-900 text-orange-100' : 'hover:bg-orange-50 text-black'}`}
+                onClick={() => {
+                  // Add your logout logic here
+                  handleAccountClose();
+                }}
+              >
+                <ListItemText primary="Logout" />
+              </ListItemButton>
+            </div>
+          </div>
+        </Popover>
       </nav>
 
+      {/* Rest of your existing code remains exactly the same */}
       {/* Main Content */}
       <div className="flex flex-1" style={{ paddingTop: NAVBAR_HEIGHT }}>
         {/* Sidebar */}
