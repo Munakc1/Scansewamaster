@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
-  const [accountAnchor, setAccountAnchor] = useState<null | HTMLElement>(null); // New state for account popover
+  const [accountAnchor, setAccountAnchor] = useState<null | HTMLElement>(null);
 
   const NAVBAR_HEIGHT = 64;
 
@@ -40,14 +40,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
   const handleNotifOpen = (event: React.MouseEvent<HTMLElement>) => setNotifAnchor(event.currentTarget);
   const handleNotifClose = () => setNotifAnchor(null);
-  const handleAccountOpen = (event: React.MouseEvent<HTMLElement>) => setAccountAnchor(event.currentTarget); // New handler
-  const handleAccountClose = () => setAccountAnchor(null); // New handler
+  const handleAccountOpen = (event: React.MouseEvent<HTMLElement>) => setAccountAnchor(event.currentTarget);
+  const handleAccountClose = () => setAccountAnchor(null);
 
   return (
-    <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-gray-900 text-orange-50' : 'bg-white text-gray-900'}`}>
+    <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-black text-orange-50' : 'bg-white text-gray-900'}`}>
       {/* Navbar */}
       <nav
-        className={`px-4 py-2 flex items-center justify-between fixed top-0 left-0 right-0 z-50 shadow-sm ${darkMode ? 'bg-gray-900 border-orange-800' : 'bg-white border-orange-200'} border-b`}
+        className={`px-4 py-2 flex items-center justify-between fixed top-0 left-0 right-0 z-50 shadow-sm ${darkMode ? 'bg-black border-orange-800' : 'bg-white border-orange-200'} border-b`}
         style={{ height: NAVBAR_HEIGHT }}
       >
         <div className="flex items-center space-x-4">
@@ -63,15 +63,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="flex-grow max-w-md mx-4">
-          <div className="relative">
-            <Search className={`absolute top-1/2 left-3 transform -translate-y-1/2 ${darkMode ? 'text-orange-300' : 'text-black'}`} />
-            <input
-              type="search"
-              placeholder="Search..."
-              className={`w-full py-2 pl-10 pr-4 rounded-md border ${darkMode ? 'bg-gray-800 border-orange-700 text-orange-50 placeholder-orange-300 focus:ring-orange-500' : 'bg-white border-orange-300 text-black placeholder-gray-500 focus:ring-orange-400'} focus:outline-none focus:ring-2`}
-            />
-          </div>
-        </div>
+  <div className="relative">
+    <Search className={`absolute top-1/2 left-3 transform -translate-y-1/2 ${darkMode ? 'text-orange-300' : 'text-gray-500'}`} />
+    <input
+      type="search"
+      placeholder="Search..."
+      className={`w-full py-2 pl-10 pr-4 rounded-md border ${darkMode ? 'bg-black border-orange-700 text-orange-50 placeholder-orange-300 focus:ring-orange-500' : 'bg-white border-orange-300 text-black placeholder-gray-500 focus:ring-orange-400'} focus:outline-none focus:ring-2`}
+    />
+  </div>
+</div>
 
         <div className="flex items-center space-x-2">
           <Tooltip title="Notifications">
@@ -105,18 +105,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <div className={`p-4 w-80 ${darkMode ? 'bg-gray-900 border border-orange-800' : 'bg-white border border-orange-200'}`}>
+          <div className={`p-4 w-80 ${darkMode ? 'bg-black border border-orange-800' : 'bg-white border border-orange-200'}`}>
             <Typography variant="h6" className={`font-bold mb-2 ${darkMode ? 'text-orange-400' : 'text-black'}`}>Notifications</Typography>
             <div className="space-y-2">
-              <div className={`p-2 rounded ${darkMode ? 'bg-gray-800 text-orange-100' : 'bg-orange-50 text-gray-800'}`}>
+              <div className={`p-2 rounded ${darkMode ? 'bg-gray-900 text-orange-100' : 'bg-orange-50 text-gray-800'}`}>
                 <Typography variant="subtitle2">5 voids processed in 1 hour (Store 3)</Typography>
                 <Typography variant="body2" className={darkMode ? 'text-orange-300' : 'text-gray-600'}>Just now</Typography>
               </div>
-              <div className={`p-2 rounded ${darkMode ? 'bg-gray-800 text-orange-100' : 'bg-orange-50 text-gray-800'}`}>
+              <div className={`p-2 rounded ${darkMode ? 'bg-gray-900 text-orange-100' : 'bg-orange-50 text-gray-800'}`}>
                 <Typography variant="subtitle2">Payment gateway error (Store 3)</Typography>
                 <Typography variant="body2" className={darkMode ? 'text-orange-300' : 'text-gray-600'}>15 min ago</Typography>
               </div>
-              <div className={`p-2 rounded ${darkMode ? 'bg-gray-800 text-orange-100' : 'bg-orange-50 text-gray-800'}`}>
+              <div className={`p-2 rounded ${darkMode ? 'bg-gray-900 text-orange-100' : 'bg-orange-50 text-gray-800'}`}>
                 <Typography variant="subtitle2">POS disconnected (Store 2)</Typography>
                 <Typography variant="body2" className={darkMode ? 'text-orange-300' : 'text-gray-600'}>30 min ago</Typography>
               </div>
@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </Popover>
 
-        {/* Account Popover - New addition */}
+        {/* Account Popover */}
         <Popover
           open={Boolean(accountAnchor)}
           anchorEl={accountAnchor}
@@ -135,9 +135,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <div className={`p-4 w-64 ${darkMode ? 'bg-gray-900 border border-orange-800' : 'bg-white border border-orange-200'}`}>
+          <div className={`p-4 w-64 ${darkMode ? 'bg-black border border-orange-800' : 'bg-white border border-orange-200'}`}>
             <div className="flex items-center space-x-3 mb-4">
-              <AccountCircle className={darkMode ? 'text-orange-400 text-4xl' : 'text-black text-4xl'} />
+              <AccountCircle className={`${darkMode ? 'text-orange-400' : 'text-black'} text-4xl`} />
               <div>
                 <Typography variant="subtitle1" className={`font-bold ${darkMode ? 'text-orange-100' : 'text-black'}`}>
                   Admin User
@@ -164,7 +164,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   <ListItemText primary="Account Settings" />
                 </ListItemButton>
               </Link>
-              <div className="border-t border-orange-700 my-2"></div>
+              <div className={`border-t ${darkMode ? 'border-orange-700' : 'border-orange-200'} my-2`}></div>
               <ListItemButton 
                 className={`${darkMode ? 'hover:bg-orange-900 text-orange-100' : 'hover:bg-orange-50 text-black'}`}
                 onClick={() => {
@@ -179,12 +179,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </Popover>
       </nav>
 
-      {/* Rest of your existing code remains exactly the same */}
       {/* Main Content */}
       <div className="flex flex-1" style={{ paddingTop: NAVBAR_HEIGHT }}>
         {/* Sidebar */}
         <aside
-          className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64' : 'w-16'} fixed top-[64px] left-0 bottom-0 z-40 ${darkMode ? 'bg-gray-900 border-r border-orange-800' : 'bg-white border-r border-orange-200'}`}
+          className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64' : 'w-16'} fixed top-[64px] left-0 bottom-0 z-40 ${darkMode ? 'bg-black border-r border-orange-800' : 'bg-white border-r border-orange-200'}`}
         >
           <List className="overflow-y-auto h-full">
             {navItems.map((item) => (
@@ -212,7 +211,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         {/* Content Area */}
         <main
-          className={`flex-grow transition-all duration-300 ease-in-out overflow-auto ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}
+          className={`flex-grow transition-all duration-300 ease-in-out overflow-auto ${darkMode ? 'bg-black' : 'bg-white'}`}
           style={{ 
             marginLeft: sidebarOpen ? '256px' : '64px',
             height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,

@@ -1,9 +1,10 @@
 'use client';
 
-import { Card, CardContent, Typography, Chip, Divider } from '@mui/material';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from '../components/ThemeContext';
-import { CheckCircle, Warning, Error, Restaurant, People, Notifications, 
-  Engineering, Computer, Chair, Receipt, WarningAmber, CalendarToday } from '@mui/icons-material';
+import { CheckCircle, AlertTriangle, Bell, Utensils, Users, Laptop, Table, ShoppingCart, AlertCircle, Calendar } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
 export default function DashboardPage() {
   const { darkMode } = useTheme();
@@ -11,59 +12,17 @@ export default function DashboardPage() {
   // Sample data
   type Trend = 'up' | 'down';
 
-  const stats: {
-    restaurants: {
-      total: number;
-      active: number;
-      inactive: number;
-      trend: Trend;
-    };
-    customers: {
-      total: number;
-      newToday: number;
-      trend: Trend;
-    };
-    alerts: {
-      total: number;
-      critical: number;
-      resolved: number;
-    };
-    staff: {
-      total: number;
-      active: number;
-    };
-    terminals: {
-      total: number;
-      online: number;
-    };
-    tables: {
-      total: number;
-      occupied: number;
-      available: number;
-    };
-    orders: {
-      pending: number;
-      completed: number;
-    };
-    inventory: {
-      outOfStock: number;
-      lowStock: number;
-    };
-    reservations: {
-      active: number;
-      upcoming: number;
-    };
-  } = {
+  const stats = {
     restaurants: {
       total: 42,
       active: 38,
       inactive: 4,
-      trend: 'up'
+      trend: 'up' as Trend
     },
     customers: {
       total: 1285,
       newToday: 24,
-      trend: 'up'
+      trend: 'up' as Trend
     },
     alerts: {
       total: 15,
@@ -97,269 +56,261 @@ export default function DashboardPage() {
     }
   };
 
-  const getAlertColor = (status: string) => {
-    switch(status) {
-      case 'critical': return 'error';
-      case 'high': return 'warning';
-      default: return 'info';
-    }
-  };
-
-  const StatCard = ({ icon, title, value, trend, className = '' }: { 
+  const StatCard = ({ 
+    icon, 
+    title, 
+    value,
+    trend,
+    className = ''
+  }: { 
     icon: React.ReactNode, 
     title: string, 
     value: string | number,
-    trend?: 'up' | 'down',
+    trend?: Trend,
     className?: string 
   }) => (
-    <Card className={`shadow-lg ${darkMode ? '!bg-black' : 'bg-white'} ${className}`}>
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className={`p-2 rounded-full mr-3 ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-              {icon}
-            </div>
-            <div>
-              <Typography variant="subtitle2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                {title}
-              </Typography>
-              <Typography variant="h5" className="font-bold">
-                {value}
-              </Typography>
-            </div>
-          </div>
-          {trend && (
-            <div className={`p-1 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-              <Typography variant="body2" className={`font-bold ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                {trend === 'up' ? '↑' : '↓'}
-              </Typography>
-            </div>
-          )}
+    <Card className={className}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+        <div className={`h-4 w-4 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
+          {icon}
         </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {trend && (
+          <p className={`text-xs mt-1 ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+            {trend === 'up' ? '↑ 5% from last month' : '↓ 2% from last month'}
+          </p>
+        )}
       </CardContent>
     </Card>
   );
 
   return (
-    <div className={`min-h-screen p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
+    <div className={`min-h-screen p-4 md:p-6 ${darkMode ? 'bg-background text-foreground' : 'bg-background text-foreground'}`}>
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <Typography variant="h4" className="font-bold">
-            System Dashboard
-          </Typography>
-          <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
+          <h1 className="text-2xl font-bold">System Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
             Overview of your restaurant network
-          </Typography>
+          </p>
         </div>
-        <div className="mt-2 md:mt-0">
-          <Chip 
-            label="Live Updates" 
-            color="success" 
-            size="small" 
-            icon={<CheckCircle fontSize="small" />}
-          />
+        <div className="flex items-center gap-2 mt-2 md:mt-0 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30">
+          <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <span className="text-sm text-green-800 dark:text-green-200">Live Updates</span>
         </div>
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <StatCard 
-          icon={<Restaurant className={darkMode ? 'text-orange-400' : 'text-orange-600'} />} 
+          icon={<Utensils className="h-4 w-4" />} 
           title="Total Restaurants" 
           value={stats.restaurants.total} 
           trend={stats.restaurants.trend}
         />
         <StatCard 
-          icon={<People className={darkMode ? 'text-green-400' : 'text-green-600'} />} 
+          icon={<Users className="h-4 w-4" />} 
           title="Total Customers" 
           value={stats.customers.total.toLocaleString()} 
           trend={stats.customers.trend}
         />
         <StatCard 
-          icon={<Notifications className={darkMode ? 'text-red-400' : 'text-red-600'} />} 
+          icon={<Bell className="h-4 w-4" />} 
           title="Total Alerts" 
-          value={stats.alerts.total} 
+          value={stats.alerts.total}
         />
         <StatCard 
-          icon={<Engineering className={darkMode ? 'text-blue-400' : 'text-blue-600'} />} 
+          icon={<Users className="h-4 w-4" />} 
           title="Active Staff" 
-          value={`${stats.staff.active}/${stats.staff.total}`} 
+          value={`${stats.staff.active}/${stats.staff.total}`}
         />
         <StatCard 
-          icon={<Computer className={darkMode ? 'text-purple-400' : 'text-purple-600'} />} 
+          icon={<Laptop className="h-4 w-4" />} 
           title="Online Terminals" 
-          value={`${stats.terminals.online}/${stats.terminals.total}`} 
+          value={`${stats.terminals.online}/${stats.terminals.total}`}
         />
         <StatCard 
-          icon={<Chair className={darkMode ? 'text-yellow-400' : 'text-yellow-600'} />} 
+          icon={<Table className="h-4 w-4" />} 
           title="Open Tables" 
-          value={`${stats.tables.available}/${stats.tables.total}`} 
+          value={`${stats.tables.available}/${stats.tables.total}`}
         />
         <StatCard 
-          icon={<Receipt className={darkMode ? 'text-indigo-400' : 'text-indigo-600'} />} 
+          icon={<ShoppingCart className="h-4 w-4" />} 
           title="Pending Orders" 
-          value={stats.orders.pending} 
+          value={stats.orders.pending}
         />
         <StatCard 
-          icon={<WarningAmber className={darkMode ? 'text-amber-400' : 'text-amber-600'} />} 
+          icon={<AlertCircle className="h-4 w-4" />} 
           title="Out of Stock" 
-          value={stats.inventory.outOfStock} 
+          value={stats.inventory.outOfStock}
         />
         <StatCard 
-          icon={<CalendarToday className={darkMode ? 'text-teal-400' : 'text-teal-600'} />} 
+          icon={<Calendar className="h-4 w-4" />} 
           title="Active Reservations" 
-          value={stats.reservations.active} 
+          value={stats.reservations.active}
         />
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Restaurants Card */}
-        <Card className={`shadow-lg ${darkMode ? '!bg-black' : 'bg-white'}`}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Typography variant="h6" className="font-semibold">
-                Restaurants
-              </Typography>
-              <div className={`p-2 rounded-full ${darkMode ? 'bg-orange-900' : 'bg-orange-100'}`}>
-                <Typography variant="body2" className={`font-bold ${darkMode ? 'text-orange-300' : 'text-orange-600'}`}>
-                  {stats.restaurants.trend === 'up' ? '↑ 5%' : '↓ 2%'}
-                </Typography>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Utensils className="h-5 w-5 text-orange-500" />
+              <span>Restaurants</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold mb-4">{stats.restaurants.total}</div>
+            
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Active</span>
+                <span className="font-medium">{stats.restaurants.active}</span>
               </div>
+              <Progress 
+                value={(stats.restaurants.active / stats.restaurants.total) * 100} 
+                className="h-2 bg-orange-100 dark:bg-orange-900/30"
+              />
             </div>
             
-            <Typography variant="h3" className={`font-bold mb-2 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-              {stats.restaurants.total}
-            </Typography>
-            
-            <Divider className={`my-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
-            
-            <div className="flex justify-between">
-              <div>
-                <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                  Active
-                </Typography>
-                <Typography variant="body1" className="font-medium">
-                  {stats.restaurants.active}
-                </Typography>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Inactive</span>
+                <span className="font-medium">{stats.restaurants.inactive}</span>
               </div>
-              <div>
-                <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                  Inactive
-                </Typography>
-                <Typography variant="body1" className="font-medium">
-                  {stats.restaurants.inactive}
-                </Typography>
-              </div>
+              <Progress 
+                value={(stats.restaurants.inactive / stats.restaurants.total) * 100} 
+                className="h-2 bg-gray-100 dark:bg-gray-800"
+              />
             </div>
           </CardContent>
         </Card>
 
         {/* Customers Card */}
-        <Card className={`shadow-lg ${darkMode ? '!bg-black' : 'bg-white'}`}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Typography variant="h6" className="font-semibold">
-                Customers
-              </Typography>
-              <div className={`p-2 rounded-full ${darkMode ? 'bg-green-900' : 'bg-green-100'}`}>
-                <Typography variant="body2" className={`font-bold ${darkMode ? 'text-green-300' : 'text-green-600'}`}>
-                  {stats.customers.trend === 'up' ? '↑ 12%' : '↓ 5%'}
-                </Typography>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-green-500" />
+              <span>Customers</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold mb-4">{stats.customers.total.toLocaleString()}</div>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">New Today</p>
+                  <p className="font-medium">+{stats.customers.newToday}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Avg. Daily</p>
+                  <p className="font-medium">~45</p>
+                </div>
               </div>
-            </div>
-            
-            <Typography variant="h3" className={`font-bold mb-2 ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-              {stats.customers.total.toLocaleString()}
-            </Typography>
-            
-            <Divider className={`my-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
-            
-            <div className="flex justify-between">
-              <div>
-                <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                  New Today
-                </Typography>
-                <Typography variant="body1" className="font-medium">
-                  +{stats.customers.newToday}
-                </Typography>
-              </div>
-              <div>
-                <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                  Avg. Daily
-                </Typography>
-                <Typography variant="body1" className="font-medium">
-                  ~45
-                </Typography>
+              
+              <div className="rounded-lg bg-green-100 dark:bg-green-900/30 p-3">
+                <p className="text-sm text-green-800 dark:text-green-200">
+                  <span className="font-medium">↑ 12%</span> from last month
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* System Health Card */}
-        <Card className={`shadow-lg ${darkMode ? '!bg-black' : 'bg-white'}`}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Typography variant="h6" className="font-semibold">
-                System Health
-              </Typography>
-              <Chip 
-                label="Stable" 
-                color="success" 
-                size="small" 
-                icon={<CheckCircle fontSize="small" />}
-              />
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-blue-500" />
+              <span>System Health</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+              <span className="text-sm">All systems operational</span>
             </div>
             
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                  POS Systems
-                </Typography>
-                <Typography variant="body1" className="font-medium">
-                  38/42 Online
-                </Typography>
+              <div className="rounded-lg bg-muted p-3">
+                <p className="text-sm text-muted-foreground">POS Systems</p>
+                <p className="font-medium">38/42 Online</p>
               </div>
-              <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-                  Payment Gateways
-                </Typography>
-                <Typography variant="body1" className="font-medium">
-                  40/42 Active
-                </Typography>
+              <div className="rounded-lg bg-muted p-3">
+                <p className="text-sm text-muted-foreground">Payment Gateways</p>
+                <p className="font-medium">40/42 Active</p>
               </div>
             </div>
             
-            <Divider className={`my-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
-            
-            <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
+            <p className="text-sm text-muted-foreground">
               Last system check: 5 min ago
-            </Typography>
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Alerts Section */}
-      <Card className={`shadow-lg ${darkMode ? '!bg-black' : 'bg-white'} mb-8`}>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <Typography variant="h6" className="font-semibold">
-              Recent Alerts
-            </Typography>
-            <Typography variant="body2" className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
-              {stats.alerts.critical} critical, {stats.alerts.total - stats.alerts.resolved} unresolved
-            </Typography>
-          </div>
-          
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <span>Recent Alerts</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="space-y-4">
-            {/* ... existing alerts code ... */}
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                </div>
+              </div>
+              <div>
+                <h4 className="font-medium">POS Terminal Offline</h4>
+                <p className="text-sm text-muted-foreground">Terminal #42 at Downtown location has been offline for 2 hours</p>
+                <p className="text-xs text-red-500 mt-1">Critical • Just now</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="h-10 w-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                </div>
+              </div>
+              <div>
+                <h4 className="font-medium">Low Inventory</h4>
+                <p className="text-sm text-muted-foreground">Chicken Breast is running low (12 remaining)</p>
+                <p className="text-xs text-yellow-500 mt-1">Warning • 15 min ago</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                </div>
+              </div>
+              <div>
+                <h4 className="font-medium">Issue Resolved</h4>
+                <p className="text-sm text-muted-foreground">Payment gateway at Westside location is back online</p>
+                <p className="text-xs text-green-500 mt-1">Resolved • 1 hour ago</p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Last Updated */}
-      <div className={`text-sm text-center ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+      <div className="text-sm text-center text-muted-foreground mt-6">
         Last updated: {new Date().toLocaleString()}
       </div>
     </div>
